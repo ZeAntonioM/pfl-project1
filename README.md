@@ -1,1 +1,2 @@
-# pfl-project1
+# Isaac Board Game - PFL first project
+
