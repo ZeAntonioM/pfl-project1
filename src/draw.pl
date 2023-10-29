@@ -61,14 +61,14 @@ draw_separation_line(N):-
         draw_separation_line(N2).
 
 draw_line_content([Head]):-
-    put_char(' '),
+    %put_char(' '),
     print_string_(Head),
-    print_string_(" |").
+    print_string_("|").
 
 draw_line_content([Head|Rest]):-
-    put_char(' '),
+    %put_char(''),
     print_string_(Head),
-    print_string_(" |"),
+    print_string_("|"),
     draw_line_content(Rest).
 
 draw_line(100).                   
