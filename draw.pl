@@ -1,73 +1,50 @@
-print_matrix([]).
-print_matrix([Row|Rest]) :-
-    print_row(Row),
-    nl, % Newline to separate rows
-    print_matrix(Rest).
-write_val(0):-print_string_(" 00 ").
+:-consult('utils.pl').
+
 write_val(N):-
+        N<10,
+        write(' '),
+        write(0),
+        write(N),
+        write(' ').
+
+write_val(N):-
+        N>=10,
         write(' '),
         write(N),
         write(' ').
-% Predicate to print a row
-print_row([]).
-print_row([Cell|Rest]) :-
-    write(Cell), % Print the current cell
-    put_char('\t'), % Tab separator
-    print_row(Rest).
-        
-print_string_([]):-!.
-print_string_([Head | Rest]):-
-        char_code(Char,Head),
-        write(Char),
-        print_string_(Rest).
-
-
-
-
-invert([],Rev, Rev).
-invert(List,Rev):- invert(List,[], Rev).
-invert([Head | Rest], Acc, Rev):-
-        invert(Rest, [Head | Acc], Rev).
-
-invert_matrix([],Rev, Rev).
-invert_matrix(List,Rev):- invert_matrix(List,[], Rev).
-invert_matrix([Head | Rest], Acc, Rev):-
-        invert(Head,Rev2),
-        invert_matrix(Rest, [Rev2 | Acc], Rev).
 
 draw_number_line(0):-
-        print_string_("  xx "),
-        put_char('|'),
-        write_val(0),
-        draw_number_line(10).
-
-draw_number_line(100):-
+        print_string_("  xx | 00 "),
+        
+        draw_number_line(1),
         put_char('|'),
         print_string_(" xx "),
         nl.
+        
        
 draw_number_line(N):-
-        N < 100,
+        N <10,
         put_char('|'),
         write_val(N),
-        N2 is N + 10,
+        N2 is N + 1,
         draw_number_line(N2).
 
+draw_number_line(10).
 
-draw_inverse_number_line(100):-
+
+draw_inverse_number_line(10):-
         print_string_("  xx "),
-        draw_inverse_number_line(90),
+        draw_inverse_number_line(9),
         put_char('|'),
         print_string_(" xx "),
-        
-nl.
+        nl.
         
        
 draw_inverse_number_line(N):-
         N >0,
         put_char('|'),
         write_val(N),
-        N2 is N - 10,
+        N2 is N - 1,
         draw_inverse_number_line(N2).
 
 draw_inverse_number_line(0):-
@@ -114,12 +91,12 @@ draw_lines([Row|Rest],Acc):-
         draw_lines(Rest, Acc2).
 
 draw_board(Pieces,1 ):-
-        draw_inverse_number_line(100),
+        draw_inverse_number_line(10),
         draw_lines(Pieces,0),
         draw_number_line(0).
 
 draw_board(Pieces,0 ):-
-        draw_inverse_number_line(100),
+        draw_inverse_number_line(10),
         invert_matrix(Pieces, Rev),
         draw_lines(Rev,0),
         draw_number_line(0).
