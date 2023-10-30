@@ -61,14 +61,14 @@ draw_separation_line(N):-
         draw_separation_line(N2).
 
 draw_line_content([Head]):-
-    put_char(' '),
+    %put_char(' '),
     print_string_(Head),
-    print_string_(" |").
+    print_string_("|").
 
 draw_line_content([Head|Rest]):-
-    put_char(' '),
+    %put_char(''),
     print_string_(Head),
-    print_string_(" |"),
+    print_string_("|"),
     draw_line_content(Rest).
 
 draw_line(100).                   
@@ -92,12 +92,13 @@ draw_lines([Row|Rest],Acc):-
 
 draw_board(Pieces,1 ):-
         draw_inverse_number_line(10),
-        draw_lines(Pieces,0),
+        list_to_matrix(Pieces,Matrix),
+        draw_lines(Matrix,0),
         draw_number_line(0).
 
 draw_board(Pieces,0 ):-
         draw_inverse_number_line(10),
-        invert_matrix(Pieces, Rev),
+        list_to_matrix(Pieces,Matrix),
+        invert_matrix(Matrix, Rev),
         draw_lines(Rev,0),
         draw_number_line(0).
-
