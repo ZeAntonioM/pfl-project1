@@ -3,8 +3,6 @@ concatenate_lists([], List, List).
 concatenate_lists([X|Xs], List2, [X|Result]) :-
     concatenate_lists(Xs, List2, Result).
 
-
-
 print_matrix([]).
 print_matrix([Row|Rest]) :-
     print_row(Row),
@@ -46,8 +44,6 @@ convert(Piece-v, String):-
     concatenate_lists([8593], String2, Result),
     concatenate_lists(Result,[ 8595],String).
 convert(_, "    ").
-
-
 
 convert_list([], []).
 convert_list([Piece|Xs], [Y|Ys]) :-

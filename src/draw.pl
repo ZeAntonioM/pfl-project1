@@ -90,13 +90,13 @@ draw_lines([Row|Rest],Acc):-
         Acc2 is Acc +10,
         draw_lines(Rest, Acc2).
 
-draw_board(Pieces,1 ):-
+draw_board(Pieces,"W" ):-
         draw_inverse_number_line(10),
         list_to_matrix(Pieces,Matrix),
         draw_lines(Matrix,0),
         draw_number_line(0).
 
-draw_board(Pieces,0 ):-
+draw_board(Pieces,"B" ):-
         draw_inverse_number_line(10),
         list_to_matrix(Pieces,Matrix),
         invert_matrix(Matrix, Rev),

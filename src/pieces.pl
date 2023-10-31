@@ -21,8 +21,6 @@ size_value(5,3).
 size_value(6,4).                                    
 size_value(7,6).        
 
-                
-
 % piece_owener(Piece,Player) - Piece belongs to Player
 piece_owener(Piece,"A"):-
     piece(Piece),
@@ -35,8 +33,6 @@ piece_owener(Piece,"B"):-
     number_of_Pieces_per_Player(N),
     Piece=<2*N.
 
-
-    
 % piece_size(Piece,Size) - Size of the Piece
 piece_size(Piece,Size):-
        piece(Piece),
@@ -74,14 +70,34 @@ pieces_with_inferior_size(Size, N):-
     N is N2 + N3.
 
 % first_piece_of_size(Size, Player,Piece):- The first Piece with size Size from the player Player
-first_piece_of_size(Size, "A",Piece):-
+first_piece_of_size(Size, "B",Piece):-
     pieces_with_inferior_size(Size, N),
     Piece is N +1.
 
-first_piece_of_size(Size, "B",Piece):-
+first_piece_of_size(Size, "W",Piece):-
     pieces_with_inferior_size(Size, N),
     number_of_Pieces_per_Player(N2),
     Piece is N + N2 +1.
+
+
+next_piece_not_on_board(Board,First_Piece,Last_Piece ,Piece):-
+        First_Piece<Last_Piece,
+        in_board(Board, First_Piece, _Position),!,
+        write('in board'), nl,
+        Next_Piece is First_Piece +1,
+        next_piece_not_on_board(Board, Next_Piece,Last_Piece,Piece).
+
+next_piece_not_on_board(_,First_Piece,Last_Piece ,First_Piece):-
+    First_Piece<Last_Piece.
+
+in_board(Board, Piece, Position) :-
+    in_board(Board, Piece, 1, Position).
+
+in_board([Piece|_], Piece, Index, Index).
+in_board([_|Rest], Piece, Index, Position) :-
+    NextIndex is Index + 1,
+    in_board(Rest, Piece, NextIndex, Position).
+
 
 
 
