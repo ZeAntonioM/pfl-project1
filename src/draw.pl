@@ -1,4 +1,4 @@
-:-consult('utils.pl').
+:-ensure_loaded('utils.pl').
 
 write_val(N):-
         N<10,

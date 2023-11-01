@@ -1,9 +1,8 @@
-:-consult('pieces.pl').
+:-ensure_loaded('pieces.pl').
+
 concatenate_lists([], List, List).
 concatenate_lists([X|Xs], List2, [X|Result]) :-
     concatenate_lists(Xs, List2, Result).
-
-
 
 print_matrix([]).
 print_matrix([Row|Rest]) :-
