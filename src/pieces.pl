@@ -22,13 +22,13 @@ size_value(6,4).
 size_value(7,6).        
 
 % piece_owener(Piece,Player) - Piece belongs to Player
-piece_owener(Piece,"B"):-
+piece_owner(Piece,"B"):-
     piece(Piece),
     number_of_Pieces_per_Player(N),
     Piece=<N,
     !.
 
-piece_owener(Piece,"W"):-
+piece_owner(Piece,"W"):-
     piece(Piece),
     number_of_Pieces_per_Player(N),
     Piece=<2*N.
