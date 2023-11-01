@@ -9,7 +9,7 @@ This is an implementation in Prolog of the board game "Isaac", which was created
 ### Board
 
 Isaac uses a 10x10 board, with different numerical values for each player. Each player will see numbers from 1 to 10 on his bottom side of the board, and numbers from 00 to 90 on his left side of the board. The board is initially empty.
-Each player has 15 pieces of 5 different sizes, eachone having is own value: 
+Each player has 15 pieces of 5 different sizes, each one having is own value: 
 - 5 pieces of size 3, value 1;
 - 4 pieces of size 4, value 2;
 - 3 pieces of size 5, value 3;
@@ -45,7 +45,7 @@ When a player scores more than 100 points, he wins the game. If both players pas
 
 ## Run the game
 
-- Open Sisctus Prolog
+- Open Sicstus Prolog
 - run `consult('isaac.pl').`
 
 ## Authors

@@ -23,8 +23,8 @@ check_move(Player, PieceType, Positions, SCB, SCW) :-
 check_valid_remove([], _, _).
 check_valid_remove([Position|T], SCB, SCW) :-
     check_valid_remove(T, SCB, SCW),
-    Position != SCB,
-    Position != SCW.
+    Position \= SCB,
+    Position \= SCW.
 
 % removes the piece from the board
 remove_piece(Piece_id) :-

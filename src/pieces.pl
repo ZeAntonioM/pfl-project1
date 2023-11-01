@@ -1,5 +1,21 @@
 number_of_Pieces_per_Player(15).
 
+piece_position(1,h,0).
+piece_position(1,h,1).
+piece_position(1,h,2).
+piece_position(16,h,20).
+piece_position(16,h,21).
+piece_position(16,h,22).
+piece_position(6,v,69).
+piece_position(6,v,79).
+piece_position(6,v,89).
+piece_position(6,v,99).
+piece_position(20,v,65).
+piece_position(20,v,75).
+piece_position(20,v,85).
+piece_position(20,v,95).
+piece_position(_,_,_) :- fail.
+
 % Piece(id) - Check if the Piece exists
 piece(Id):-
     number_of_Pieces_per_Player(N),
