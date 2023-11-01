@@ -6,11 +6,19 @@ piece_position(1,h,2).
 piece_position(16,h,20).
 piece_position(16,h,21).
 piece_position(16,h,22).
+piece_position(17,h,23).
+piece_position(17,h,24).
+piece_position(17,h,25).
+piece_position(18,h,26).
+piece_position(18,h,27).
+piece_position(18,h,28).
+piece_position(19,v,29).
+piece_position(19,v,39).
+piece_position(19,v,49).
 piece_position(6,v,69).
 piece_position(6,v,79).
 piece_position(6,v,89).
 piece_position(6,v,99).
-piece_position(20,v,65).
 piece_position(20,v,75).
 piece_position(20,v,85).
 piece_position(20,v,95).
@@ -97,23 +105,15 @@ first_piece_of_size(Size, "W",Piece):-
     Piece is N + N2 +1.
 
 
-next_piece_not_on_board(Board,First_Piece,Last_Piece ,Piece):-
+next_piece_not_on_board(First_Piece,Last_Piece ,Piece):-
         First_Piece<Last_Piece,
-        in_board(Board, First_Piece, _Position),!,
-        write('in board'), nl,
+        piece_position(First_Piece,_,Pos),!,
         Next_Piece is First_Piece +1,
-        next_piece_not_on_board(Board, Next_Piece,Last_Piece,Piece).
+        next_piece_not_on_board( Next_Piece,Last_Piece,Piece).
 
-next_piece_not_on_board(_,First_Piece,Last_Piece ,First_Piece):-
+next_piece_not_on_board(First_Piece,Last_Piece ,First_Piece):-
     First_Piece<Last_Piece.
 
-in_board(Board, Piece, Position) :-
-    in_board(Board, Piece, 1, Position).
-
-in_board([Piece|_], Piece, Index, Index).
-in_board([_|Rest], Piece, Index, Position) :-
-    NextIndex is Index + 1,
-    in_board(Rest, Piece, NextIndex, Position).
 
 
 

@@ -1,15 +1,10 @@
 :-consult('validators.pl').
 
 
-ask_for_piece_to_add(Player, Board):-
+ask_for_piece_to_add(Player):-
         repeat,
         ask_for_piece_to_add_message(Size, _Direction, _Position),
-        valide_piece(Board, Player, Size,_Piece).
-
-
-
-ask_for_piece_to_add(Player, Board):-
-             ask_for_piece_to_add(Player,Board).
+        valide_piece( Player, Size,_Piece).
 
 
 ask_for_piece_to_add_message(Size, Direction, Position):-
