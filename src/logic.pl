@@ -2,22 +2,51 @@
 :- use_module(library(between)).
 :- ensure_loaded('pieces.pl').
 
-%game_state(Board, Player, Phase, SCB, SCW, Win):-
-%   Win = 0, % 0 - Game is not over, 1 - Game is over
-%.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% 1st PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+can_place_piece(Player):-
+
+.
+
+
+add_piece(_,0,_,_).
+
+add_piece(Piece,Size,Direction, Position):-
+    (Direction = l;
+        Direction = r),
+    asserta(piece_position(Piece, h,Position)),
+    next_position(Position,Direction,Next_position),
+    Size2 is Size -1,
+    add_piece(Piece,Size2,Direction, Next_position).
+
+add_piece(Piece,Size,Direction, Position):-
+    (Direction = u;
+        Direction = d),
+    asserta(piece_position(Piece, v,Position)),
+    next_position(Position,Direction,Next_position),
+    Size2 is Size -1,
+    add_piece(Piece,Size2,Direction, Next_position).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% 2nd PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 % Move in second phase. Checks if it's possible to remove a piece from the board, and if so, removes it. After that, calculates the points and finishes the move.
-move2P(Player, Piece_id-PieceType, SCB, SCW) :-
+move2P(Player, Piece_id, SCB, SCW) :-
     findall(Position, piece_position(Piece_id, _, Position),  Positions),
     piece_position(Piece_id, Direction, _),
-    check_move(Player, PieceType, Positions, SCB, SCW),
+    check_move(Player, Piece_id, Positions, SCB, SCW),
     remove_piece(Piece_id),
     calculate_points(Player, Piece_id, Direction, Positions, SCB, SCW, Points),
     finish_move(Player, SCB, SCW, Piece_id, Points).
 
 % Checks if the move is valid
-check_move(Player, PieceType, Positions, SCB, SCW) :-
-    Player == PieceType, %Checks if the piece is in the player's color
+check_move(Player, Piece_id, Positions, SCB, SCW) :-
+    piece_owner(Player, Piece_id), %Checks if the piece belongs to the player
     check_valid_remove(Positions, SCB, SCW).    %Checks if there is a Score Counter in the piece's positions
 
 check_valid_remove([], _, _).
@@ -40,12 +69,12 @@ calculate_points(Player, Piece_id, Direction, Positions, SCB, SCW, Points) :-
 
 % Gets the values of the line
 get_line_values(Direction, [Position|T], Values) :-
-    Direction = 'H',
+    Direction is 'H',
     Line is Position div 10,
     findall(V, between(0+(1*Line), 9+(1*Line), V), Values).
 
 get_line_values(Direction, [Position|T], Values) :-
-    Direction = 'V',
+    Direction is 'V',
     Column is Position mod 10,
     append([], [Column, Column+10, Column+20, Column+30, Column+40, Column+50, Column+60, Column+70, Column+80, Column+90], Values).
 
@@ -79,8 +108,8 @@ sc_in_line([Value|T], SCB, SCW, SC) :-
 % Finishes the move
 finish_move(Player, SCB, SCW, Piece_id, Points) :-
     get_points_to_score(Points, PointsToScore),
-    score_points(Player, SCB, SCW, Points),
-    change_player(Player, Player).
+    score_points(Player, SCB, SCW, Points).
+    
 
 % Gets the points to score
 get_points_to_score(Points, PointsToScore) :-
@@ -108,10 +137,10 @@ score_points(Player, PointsToScore, SCB, SCW, Points) :-
 % Changes the player
 change_player(Player, NewPlayer) :-
     Player == 'W',
-    NewPlayer = 'B'.
+    NewPlayer is 'B'.
 
 change_player(Player, NewPlayer) :-
     Player == 'B',
-    NewPlayer = 'W'.
+    NewPlayer is 'W'.
 
 

@@ -93,25 +93,6 @@ next_piece_not_on_board(First_Piece,Last_Piece ,Piece):-
 next_piece_not_on_board(First_Piece,Last_Piece ,First_Piece):-
     First_Piece<Last_Piece.
 
-add_piece(_,0,_,_).
-
-add_piece(Piece,Size,Direction, Position):-
-    (Direction = l;
-        Direction = r),
-    asserta(piece_position(Piece, h,Position)),
-    next_position(Position,Direction,Next_position),
-    Size2 is Size -1,
-    add_piece(Piece,Size2,Direction, Next_position).
-
-add_piece(Piece,Size,Direction, Position):-
-    (Direction = u;
-        Direction = d),
-    asserta(piece_position(Piece, v,Position)),
-    next_position(Position,Direction,Next_position),
-    Size2 is Size -1,
-    add_piece(Piece,Size2,Direction, Next_position).
-
-
 
 
 

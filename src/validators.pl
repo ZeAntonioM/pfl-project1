@@ -46,8 +46,14 @@ valid_position(Size,Position,Direction):-
         Size2 is Size -1,
         valid_position(Size2,Next_position,Direction).
 
+validate_menu_choice(Choice):-
+        Choice >= 1,
+        Choice =< 5.
 
-        
-
+validate_menu_choice(Choice):-
+        write('Invalid choice! Choose an option(1-5): '),nl,
+        read(Choice2),
+        validate_menu_choice(Choice2),
+        Choice is Choice2.
 
 
