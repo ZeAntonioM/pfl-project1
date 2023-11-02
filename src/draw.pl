@@ -1,5 +1,20 @@
 :-ensure_loaded('utils.pl').
-:-ensure_loaded('pieces.pl').
+
+convert_piece_to_string(Piece,h,Res):-
+    get_Piece(Piece,String),
+    append([8592], String, Result),
+    append(Result, [8594],Res).
+
+convert_piece_to_string(Piece,v,Res):-
+    get_Piece(Piece,String),
+    append([8593], String, Result),
+    append(Result,[ 8595],Res).
+    
+get_Piece(Piece,Res):-
+    piece_owner(Piece,Owner),
+    piece_size(Piece,Size),
+    Char_code is Size +48,
+    append(Owner,[Char_code],Res).
 
 write_val(N):-
         N<10,
@@ -53,7 +68,56 @@ draw_lines(Player,Line):-
         Next_line is Line +1,
         draw_lines(Player,Next_line).
 
+
 draw_board(Player ):-
         print_string_("  xx | 09 | 08 | 07 | 06 | 05 | 04 | 03 | 02 | 01 | 00 | xx "),nl,
         draw_lines(Player,0),
         print_string_("  xx | 00 | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | xx "),nl.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MENU %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+draw_top_bottom_border :-
+        write('|-----------------------------------------------------------------------------|'), nl.
+
+draw_left_right_border :-
+         write('|                                                                             |'), nl.
+
+draw_isaac :-
+        write('|   __________   ________        ____             ____            ________    |'), nl,
+        write('|  |          | |        |      /    \\           /    \\         /         |   |'), nl,
+        write('|   ---|  |---  |    ----      |  /\\  |         |  /\\  |       /          |   |'), nl,
+        write('|      |  |     |   \\         /  /  \\  \\       /  /  \\  \\      |    ------    |'), nl,
+        write('|      |  |      \\   --\\     |  /----\\  |     |  /----\\  |     |    |         |'), nl,
+        write('|      |  |       \\--   \\   /           \\    /           \\     |    ______    |'), nl,
+        write('|   ---|  |---  ___ /    | |  /-------\\  |  |  /-------\\  |    \\          |   |'), nl,
+        write('|  | ________ ||________/ /__/         \\__\\/__/         \\__\\    \\---------    |'), nl,
+        write('|                                                                             |'), nl.
+
+draw_game_options :-
+        draw_left_right_border,
+        draw_left_right_border,
+        write('|                              1. Player vs Player                            |'), nl,
+        draw_left_right_border,
+        draw_left_right_border,
+        write('|                              2. Player vs IA                                |'), nl,
+        draw_left_right_border,
+        draw_left_right_border,
+        write('|                              3. IA vs IA                                    |'), nl,
+        draw_left_right_border,
+        draw_left_right_border,
+        write('|                              4. Exit                                        |'), nl,
+        draw_left_right_border,
+        draw_left_right_border.
+
+
+draw_isaac_menu :-
+        draw_top_bottom_border,
+        draw_isaac,
+        draw_game_options,
+        draw_top_bottom_border.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,19 +1,21 @@
-:-consult('validators.pl').
-:-consult('utils.pl').
-
+:-ensure_loaded('validators.pl').
+:-ensure_loaded('draw.pl').
 ask_for_piece_to_add(Player):-
+        assertz((piece_position(_,_,_):-fail)),
         repeat,
         ask_for_piece_to_add_message(Size, Direction, Position),
         convert_direction(Player,Direction, New_Direction),
         convert_position(Player, Position, New_Position),
-        (valide_piece( Player, Size,_Piece)->
+        (valid_piece( Player, Size,Piece)->
                 true;
                 write('No more Pieces from this size are left'), nl, fail
          ),
-        (valide_position(Size,New_Position,New_Direction)->
+        (valid_position(Size,New_Position,New_Direction)->
          true;
          write('This Piece can not be placed like that'),nl,fail
-         ).
+         ),
+        add_piece(Piece,Size,New_Direction, New_Position),
+        draw_board(Player).
 
 
 ask_for_piece_to_add_message(Size, Direction, Position):-
@@ -50,3 +52,17 @@ ask_for_piece_position(Position):-
 
 
         
+
+
+isaac_menu:-
+    draw_isaac_menu,
+    % Get the user's choice
+    write('Choose an option(remember to always put a . at the end of the number): ')
+    read(Choice),
+    % Handle the user's choice
+    (Choice = 1 -> player_vs_player;
+     Choice = 2 -> player_vs_ia;
+     Choice = 3 -> ia_vs_ia;
+     Choice = 4 -> true;
+     isaac_menu).
+
