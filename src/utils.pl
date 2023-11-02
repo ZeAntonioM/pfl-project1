@@ -25,3 +25,11 @@ get_Piece(Piece,Res):-
     piece_size(Piece,Size),
     Char_code is Size +48,
     concatenate_lists(Owener,[Char_code],Res).
+
+convert_direction("W",l, r).
+convert_direction("W",r, l).
+convert_direction("W",u, d).
+convert_direction("W",d, u).
+convert_direction("B",Direction, Direction).
+convert_position("B",Position,Position).
+convert_position("W", Position, New_Position):- New_Position is 99- Position.

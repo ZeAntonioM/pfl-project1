@@ -107,7 +107,7 @@ first_piece_of_size(Size, "W",Piece):-
 
 next_piece_not_on_board(First_Piece,Last_Piece ,Piece):-
         First_Piece<Last_Piece,
-        piece_position(First_Piece,_,Pos),!,
+        piece_position(First_Piece,_,_Pos),!,
         Next_Piece is First_Piece +1,
         next_piece_not_on_board( Next_Piece,Last_Piece,Piece).
 
