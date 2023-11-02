@@ -1,29 +1,8 @@
+:-ensure_loaded('utils.pl').
 number_of_Pieces_per_Player(15).
 
-piece_position(1,h,0).
-piece_position(1,h,1).
-piece_position(1,h,2).
-piece_position(16,h,20).
-piece_position(16,h,21).
-piece_position(16,h,22).
-piece_position(17,h,23).
-piece_position(17,h,24).
-piece_position(17,h,25).
-piece_position(18,h,26).
-piece_position(18,h,27).
-piece_position(18,h,28).
-piece_position(19,v,29).
-piece_position(19,v,39).
-piece_position(19,v,49).
-piece_position(6,v,69).
-piece_position(6,v,79).
-piece_position(6,v,89).
-piece_position(6,v,99).
-piece_position(20,v,75).
-piece_position(20,v,85).
-piece_position(20,v,95).
 
-piece_position(_,_,_):-fail.
+
 
 % Piece(id) - Check if the Piece exists
 piece(Id):-
@@ -46,14 +25,14 @@ size_value(5,3).
 size_value(6,4).                                    
 size_value(7,6).        
 
-% piece_owener(Piece,Player) - Piece belongs to Player
-piece_owener(Piece,"B"):-
+% piece_owner(Piece,Player) - Piece belongs to Player
+piece_owner(Piece,"B"):-
     piece(Piece),
     number_of_Pieces_per_Player(N),
     Piece=<N,
     !.
 
-piece_owener(Piece,"W"):-
+piece_owner(Piece,"W"):-
     piece(Piece),
     number_of_Pieces_per_Player(N),
     Piece=<2*N.
@@ -113,6 +92,26 @@ next_piece_not_on_board(First_Piece,Last_Piece ,Piece):-
 
 next_piece_not_on_board(First_Piece,Last_Piece ,First_Piece):-
     First_Piece<Last_Piece.
+
+add_piece(_,0,_,_).
+
+add_piece(Piece,Size,Direction, Position):-
+    (Direction = l;
+        Direction = r),
+    asserta(piece_position(Piece, h,Position)),
+    next_position(Position,Direction,Next_position),
+    Size2 is Size -1,
+    add_piece(Piece,Size2,Direction, Next_position).
+
+add_piece(Piece,Size,Direction, Position):-
+    (Direction = u;
+        Direction = d),
+    asserta(piece_position(Piece, v,Position)),
+    next_position(Position,Direction,Next_position),
+    Size2 is Size -1,
+    add_piece(Piece,Size2,Direction, Next_position).
+
+
 
 
 
