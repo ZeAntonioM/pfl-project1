@@ -14,15 +14,9 @@ write_val(N):-
 
 draw_separation_line:- print_string_("|----|----|----|----|----|----|----|----|----|----|----|----|"), nl. 
 
-
-write_piece("B",Pos):-
-        piece_position(Piece,Direction,Pos),!,
-        convert_piece_to_string(Piece,Direction,Res),!,
-        print_string_(Res).
-
-write_piece("W",Pos):-
-        Rev_pos is 99- Pos,
-        piece_position(Piece,Direction,Rev_pos),!,
+write_piece(Player,Pos):-
+        convert_position(Player,Pos,New_Pos),
+        piece_position(Piece,Direction,New_Pos),!,
         convert_piece_to_string(Piece,Direction,Res),!,
         print_string_(Res).
 
@@ -31,7 +25,6 @@ write_piece(_,_):- print_string_("    ").
 draw_line_content(Player,Line,Idx):-
         Idx<10,
         Pos is (9-Line)*10 + Idx,
- 
         write_piece(Player,Pos),
         put_char('|'),
         Next_Idx is Idx +1,
