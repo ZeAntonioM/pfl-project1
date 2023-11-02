@@ -101,3 +101,49 @@ draw_board(Pieces,0 ):-
         draw_lines(Rev,0),
         draw_number_line(0).
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MENU %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+draw_top_bottom_border :-
+        write('|-----------------------------------------------------------------------------|'), nl.
+
+draw_left_right_border :-
+         write('|                                                                             |'), nl.
+
+draw_isaac :-
+        write('|   __________   ________        ____             ____            ________    |'), nl,
+        write('|  |          | |        |      /    \\           /    \\         /         |   |'), nl,
+        write('|   ---|  |---  |    ----      |  /\\  |         |  /\\  |       /          |   |'), nl,
+        write('|      |  |     |   \\         /  /  \\  \\       /  /  \\  \\      |    ------    |'), nl,
+        write('|      |  |      \\   --\\     |  /----\\  |     |  /----\\  |     |    |         |'), nl,
+        write('|      |  |       \\--   \\   /           \\    /           \\     |    ______    |'), nl,
+        write('|   ---|  |---  ___ /    | |  /-------\\  |  |  /-------\\  |    \\          |   |'), nl,
+        write('|  | ________ ||________/ /__/         \\__\\/__/         \\__\\    \\---------    |'), nl,
+        write('|                                                                             |'), nl.
+
+draw_game_options :-
+        draw_left_right_border,
+        draw_left_right_border,
+        write('|                              1. Player vs Player                            |'), nl,
+        draw_left_right_border,
+        draw_left_right_border,
+        write('|                              2. Player vs IA                                |'), nl,
+        draw_left_right_border,
+        draw_left_right_border,
+        write('|                              3. IA vs IA                                    |'), nl,
+        draw_left_right_border,
+        draw_left_right_border,
+        write('|                              4. Exit                                        |'), nl,
+        draw_left_right_border,
+        draw_left_right_border.
+
+
+draw_isaac_menu :-
+        draw_top_bottom_border,
+        draw_isaac,
+        draw_game_options,
+        draw_top_bottom_border.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
