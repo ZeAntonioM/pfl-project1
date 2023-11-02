@@ -9,6 +9,12 @@ This is an implementation in Prolog of the board game "Isaac", which was created
 ### Board
 
 Isaac uses a 10x10 board, with different numerical values for each player. Each player will see numbers from 1 to 10 on his bottom side of the board, and numbers from 00 to 90 on his left side of the board. The board is initially empty.
+Each player has 15 pieces of 5 different sizes, eachone having is own value: 
+- 5 pieces of size 3, value 1;
+- 4 pieces of size 4, value 2;
+- 3 pieces of size 5, value 3;
+- 2 pieces of size 6, value 4;
+- 1 piece of size 7, value 6. 
 
 ### Placement Phase
 
@@ -33,12 +39,11 @@ This game has a specific method to score. Both players start with 0 points, and 
 
 #### Moving the Score Counter
 
-After scoring, the player may move his score counter a number of cells between 0 and the final score. The score counter cannot be placed on a cell that already contains a score counter. 
+After scoring, the player may move his score counter a number of cells between 0 and the final score. The score counter cannot be placed on a cell that already contains a score counter.
 
 When a player scores more than 100 points, he wins the game. If both players pass, the player with the highest score wins.
 
-
-## Run  the game
+## Run the game
 
 - Open Sisctus Prolog
 - run `consult('isaac.pl').`
