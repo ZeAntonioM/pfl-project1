@@ -1,10 +1,19 @@
 :-consult('validators.pl').
-
+:-consult('utils.pl').
 
 ask_for_piece_to_add(Player):-
         repeat,
-        ask_for_piece_to_add_message(Size, _Direction, _Position),
-        valide_piece( Player, Size,_Piece).
+        ask_for_piece_to_add_message(Size, Direction, Position),
+        convert_direction(Player,Direction, New_Direction),
+        convert_position(Player, Position, New_Position),
+        (valide_piece( Player, Size,_Piece)->
+                true;
+                write('No more Pieces from this size are left'), nl, fail
+         ),
+        (valide_position(Size,New_Position,New_Direction)->
+         true;
+         write('This Piece can not be placed like that'),nl,fail
+         ).
 
 
 ask_for_piece_to_add_message(Size, Direction, Position):-
