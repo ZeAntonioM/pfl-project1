@@ -1,105 +1,78 @@
-:-consult('utils.pl').
+:-ensure_loaded('utils.pl').
+
+convert_piece_to_string(Piece,h,Res):-
+    get_Piece(Piece,String),
+    append([8592], String, Result),
+    append(Result, [8594],Res).
+
+convert_piece_to_string(Piece,v,Res):-
+    get_Piece(Piece,String),
+    append([8593], String, Result),
+    append(Result,[ 8595],Res).
+    
+get_Piece(Piece,Res):-
+    piece_owner(Piece,Owner),
+    piece_size(Piece,Size),
+    Char_code is Size +48,
+    append(Owner,[Char_code],Res).
 
 write_val(N):-
         N<10,
-        write(' '),
-        write(0),
+        write(' 0'),
         write(N),
         write(' ').
 
 write_val(N):-
-        N>=10,
         write(' '),
         write(N),
         write(' ').
 
-draw_number_line(0):-
-        print_string_("  xx | 00 "),
-        
-        draw_number_line(1),
+draw_separation_line:- print_string_("|----|----|----|----|----|----|----|----|----|----|----|----|"), nl. 
+
+write_piece(Player,Pos):-
+        convert_position(Player,Pos,New_Pos),
+        piece_position(Piece,Direction,New_Pos),!,
+        convert_piece_to_string(Piece,Direction,Res),!,
+        print_string_(Res).
+
+write_piece(_,_):- print_string_("    ").
+
+draw_line_content(Player,Line,Idx):-
+        Idx<10,
+        Pos is (9-Line)*10 + Idx,
+        write_piece(Player,Pos),
         put_char('|'),
-        print_string_(" xx "),
-        nl.
-        
-       
-draw_number_line(N):-
-        N <10,
+        Next_Idx is Idx +1,
+        draw_line_content(Player,Line,Next_Idx).
+
+draw_line_content(_,_,10).
+
+draw_line(Player,Line):-
+        Line<10,
+        Val is Line*10,
+        Val2 is 90 -Val,
         put_char('|'),
-        write_val(N),
-        N2 is N + 1,
-        draw_number_line(N2).
-
-draw_number_line(10).
-
-
-draw_inverse_number_line(10):-
-        print_string_("  xx "),
-        draw_inverse_number_line(9),
+        write_val(Val2),
         put_char('|'),
-        print_string_(" xx "),
-        nl.
-        
-       
-draw_inverse_number_line(N):-
-        N >0,
-        put_char('|'),
-        write_val(N),
-        N2 is N - 1,
-        draw_inverse_number_line(N2).
-
-draw_inverse_number_line(0):-
-        write('|'),
-        write_val(0).
-draw_separation_line(N):-
-    N=<0,
-    put_char('|'),
-    nl.
-draw_separation_line(N):-
-        N >0,
-        print_string_("|----"),
-        N2 is N-3,
-        draw_separation_line(N2).
-
-draw_line_content([Head]):-
-    %put_char(' '),
-    print_string_(Head),
-    print_string_("|").
-
-draw_line_content([Head|Rest]):-
-    %put_char(''),
-    print_string_(Head),
-    print_string_("|"),
-    draw_line_content(Rest).
-
-draw_line(100).                   
-draw_line(List,Acc):-
-        Acc<100,
-        Val is 90 -Acc,
-        put_char('|'),
+        draw_line_content(Player,Line,0),
         write_val(Val),
         put_char('|'),
-        draw_line_content(List),
-        write_val(Acc),
-        put_char('|'),
         nl.
 
-draw_lines([],_):-draw_separation_line(35).
-draw_lines([Row|Rest],Acc):-
-        draw_separation_line(35),
-        draw_line(Row,Acc),
-        Acc2 is Acc +10,
-        draw_lines(Rest, Acc2).
+draw_line(_,10).
 
-draw_board(Pieces,1 ):-
-        draw_inverse_number_line(10),
-        draw_lines(Pieces,0),
-        draw_number_line(0).
+draw_lines(_,10):-draw_separation_line.
+draw_lines(Player,Line):-
+        draw_separation_line,
+        draw_line(Player,Line),
+        Next_line is Line +1,
+        draw_lines(Player,Next_line).
 
-draw_board(Pieces,0 ):-
-        draw_inverse_number_line(10),
-        invert_matrix(Pieces, Rev),
-        draw_lines(Rev,0),
-        draw_number_line(0).
+
+draw_board(Player ):-
+        print_string_("  xx | 09 | 08 | 07 | 06 | 05 | 04 | 03 | 02 | 01 | 00 | xx "),nl,
+        draw_lines(Player,0),
+        print_string_("  xx | 00 | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | xx "),nl.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,3 +120,4 @@ draw_isaac_menu :-
         draw_top_bottom_border.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
