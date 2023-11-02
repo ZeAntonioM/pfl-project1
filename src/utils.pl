@@ -5,22 +5,6 @@ print_string_([Head | Rest]):-
         write(Char),
         print_string_(Rest).
 
-convert_piece_to_string(Piece,h,Res):-
-    get_Piece(Piece,String),
-    append([8592], String, Result),
-    append(Result, [8594],Res).
-
-convert_piece_to_string(Piece,v,Res):-
-    get_Piece(Piece,String),
-    append([8593], String, Result),
-    append(Result,[ 8595],Res).
-    
-get_Piece(Piece,Res):-
-    piece_owner(Piece,Owner),
-    piece_size(Piece,Size),
-    Char_code is Size +48,
-    append(Owner,[Char_code],Res).
-
 convert_direction("W",l, r).
 convert_direction("W",r, l).
 convert_direction("W",u, d).
