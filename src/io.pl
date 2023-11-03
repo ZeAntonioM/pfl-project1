@@ -69,3 +69,14 @@ ask_for_menu_option(Choise):-
         write('Invalid choice! '),
         ask_for_menu_option(Choise).
 
+% Gets the points to score
+get_points_to_score(Points, PointsToScore) :-
+    write('You have removed a piece from the board and can score from 1 to '), write(Points), write(' points.'), nl,
+    write('Choose the number of points you want to score: '), nl,
+    read(PointsToScore),
+    PointsToScore > 0,
+    PointsToScore =< Points.
+
+get_points_to_score(Points, PointsToScore) :-
+    write('Invalid number of points. Try again.'), nl,
+    get_points_to_score(Points, PointsToScore).

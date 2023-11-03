@@ -1,9 +1,6 @@
 :-ensure_loaded('utils.pl').
 number_of_Pieces_per_Player(15).
 
-
-
-
 % Piece(id) - Check if the Piece exists
 piece(Id):-
     number_of_Pieces_per_Player(N),

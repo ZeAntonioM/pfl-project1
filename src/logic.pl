@@ -1,6 +1,7 @@
 :- use_module(library(clpfd)).
 :- use_module(library(between)).
 :- ensure_loaded('pieces.pl').
+:- ensure_loaded('io.pl').
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%% 1st PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
@@ -70,26 +71,20 @@ calculate_points(Player, Piece_id, Direction, Positions, SCB, SCW, Points) :-
     Points is (Pieces * Value)*SC.
 
 % Gets the values of the line
-get_line_values(Direction, [Position|T], Values) :-
-    Direction is 'H',
+get_line_values(h, [Position|T], Values) :-
     Line is Position div 10,
     findall(V, between(0+(1*Line), 9+(1*Line), V), Values).
 
-get_line_values(Direction, [Position|T], Values) :-
-    Direction is 'V',
+get_line_values(v, [Position|T], Values) :-
     Column is Position mod 10,
     append([], [Column, Column+10, Column+20, Column+30, Column+40, Column+50, Column+60, Column+70, Column+80, Column+90], Values).
 
 
 % Checks the number of pieces in the line
-pieces_in_line([], 0).
-pieces_in_line([Value|T], Pieces) :-
-    piece_position(_, _, Value),
-    Pieces is Pieces1 + 1,
-    pieces_in_line(T, Pieces1).
+pieces_in_line(Values, Pieces) :-
+    setof(Id, Direction^Position^(piece_position(Id,Direction,Position), member(Position, Values)),Res),
+    length(Res, Pieces).
     
-pieces_in_line([Value|T], Pieces) :-
-    pieces_in_line(T, Pieces).
     
 % Checks the number of score counters in the line
 sc_in_line([], _, _, 0).
@@ -112,19 +107,6 @@ finish_move(Player, SCB, SCW, Piece_id, Points) :-
     get_points_to_score(Points, PointsToScore),
     score_points(Player, SCB, SCW, Points).
     
-
-% Gets the points to score
-get_points_to_score(Points, PointsToScore) :-
-    write('You have removed a piece from the board and can score from 1 to '), write(Points), write(' points.'), nl,
-    write('Choose the number of points you want to score: '), nl,
-    read(PointsToScore),
-    PointsToScore > 0,
-    PointsToScore =< Points.
-
-get_points_to_score(Points, PointsToScore) :-
-    write('Invalid number of points. Try again.'), nl,
-    get_points_to_score(Points, PointsToScore).
-
 % Scores the points
 score_points(Player, SCB, SCW, Points) :-
     Player == 'B',
