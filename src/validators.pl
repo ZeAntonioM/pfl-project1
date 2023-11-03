@@ -1,8 +1,9 @@
 :-ensure_loaded('utils.pl').
+:- use_module(library(between)).
+
 
 validate_size(Size):-
-        Size>2,
-        Size<8.
+        between(3,7,Size).
 
 validate_direction(Direction):-
         Direction = d;
@@ -11,8 +12,7 @@ validate_direction(Direction):-
         Direction = r.
 
 validate_position(Position):-
-        Position >=0,
-        Position =<99.
+        between(0,99,Position).
 
 valid_piece( Player, Size, Piece) :-
     first_piece_of_size(Size, Player, First_Piece),
@@ -20,6 +20,7 @@ valid_piece( Player, Size, Piece) :-
     first_piece_of_size(Size2, Player, Last_Piece),
     !,
     next_piece_not_on_board( First_Piece, Last_Piece, Piece).
+
 
 valid_position(1,Position,_):-
         validate_position(Position),
