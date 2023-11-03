@@ -55,10 +55,7 @@ ask_for_piece_position(Position):-
 
 isaac_menu(Gamemode):-
     draw_isaac_menu,
-    % Get the user's choice
-    write('Choose an option(1-5): ')
-    read(Choice), nl,
-    validate_menu_choice(Choice).
-    % Handle the user's choice
-    Gamemode is Choice.
+    write('Choose an option(1-5): '),
+    read(Gamemode), nl,
+    validate_menu_choice(Gamemode).
 

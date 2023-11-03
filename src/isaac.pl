@@ -6,7 +6,7 @@ play:-
     retractall(piece_position(_,_,_)),
 
     % Sets the board
-    asserta((piece_position(_,_,_):-fail.)),
+    asserta((piece_position(_,_,_):-fail)),
 
     % Menu e ver o modo 
     isaac_menu(Gamemode),
@@ -16,8 +16,6 @@ play:-
 
     % Verifies if wants to play again
     playagain(Gamemode).
-
-
 
 
 % Game cycle
@@ -33,30 +31,31 @@ gamemode(1):-
     phase2cycle(FirstPlayerToFinish,0,0,0),
     check_winner(Won).
 
-check_winner(0):-
+check_winner(0).%:-
 
     %see length of pieces not placed
     
-.
+%.    
+
 
 check_winner("B").
 
 check_winner("W").
 
 % 2 - Player vs Computer
-gamemode(2):-
+gamemode(2).%:-
     
-.
+%.
 
 % 3 - Computer vs Human
-gamemode(3):-
+gamemode(3).%:-
     
-.
+%.
 
 % 4 - Computer vs Computer
-gamemode(4):-
+gamemode(4).%:-
     
-.
+%.
 
 % 5 - Exit the game
 gamemode(5).
