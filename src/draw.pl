@@ -72,7 +72,12 @@ draw_lines(Player,Line):-
 draw_board(Player ):-
         print_string_("  xx | 09 | 08 | 07 | 06 | 05 | 04 | 03 | 02 | 01 | 00 | xx "),nl,
         draw_lines(Player,0),
-        print_string_("  xx | 00 | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | xx "),nl.
+        print_string_("  xx | 00 | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | xx "),nl,
+        nl,nl,
+        write(' Player '), 
+        print_string_(Player),
+        write(' turn to play'),
+        nl,nl.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

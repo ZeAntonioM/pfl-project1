@@ -8,6 +8,8 @@ play:-
     % Sets the board
     asserta((piece_position(_,_,_):-fail)),
 
+    populate(1,99),
+
     % Menu e ver o modo 
     isaac_menu(Gamemode),
 
@@ -25,11 +27,6 @@ playagain(Gamemode):-
 
 playagain(5).
 
-% 1 - Player vs Player
-gamemode(1):-
-    phase1cycle("B", FirstPlayerToFinish),
-    phase2cycle(FirstPlayerToFinish,0,0,0),
-    %check_winner(Won).
 
 check_winner(0).%:-
 
@@ -41,6 +38,12 @@ check_winner(0).%:-
 check_winner("B").
 
 check_winner("W").
+
+% 1 - Player vs Player
+gamemode(1):-
+    phase1cycle("B", FirstPlayerToFinish),
+    phase2cycle(FirstPlayerToFinish,0,0,0).
+    %check_winner(Won).
 
 % 2 - Player vs Computer
 gamemode(2).%:-
@@ -63,7 +66,7 @@ gamemode(5).
 %while the 2 players can play
 phase1cycle(Player, First_Player_To_Finish):-
 
-    can_place_piece(Player),
+    can_place_piece(Player, _, _, _),
     ask_for_piece_to_add(Player),
     change_player(Player, Next_Player),
     phase1cycle(Next_Player, First_Player_To_Finish).
@@ -73,11 +76,12 @@ phase1cycle(Player, First_Player_To_Finish):-
 phase1cycle(Player, Player):-
 
     change_player(Player, Next_Player),
-    can_place_piece(Next_Player),
+    can_place_piece(Next_Player, _, _, _),
     repeat,
     ask_for_piece_to_add(Player),    
-    \+ can_place_piece(Next_Player).
+    \+ can_place_piece(Next_Player, _, _, _).
 
+phase1cycle(Player,Player).
 
 phase2cycle(_Player, SCB, SCW, Won):-
 
