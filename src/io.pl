@@ -1,10 +1,13 @@
 :-ensure_loaded('validators.pl').
 :-ensure_loaded('logic.pl').
 :-ensure_loaded('draw.pl').
+:-ensure_loaded('logic.pl').
 
 ask_for_piece_to_add(Player):-
-
-        draw_board(Player),
+        (can_place_piece(Player,_,_,_)->
+         true;
+         write('You cannot place more pieces'),nl,fail
+         ),
         repeat,
         ask_for_piece_to_add_message(Size, Direction, Position),
         convert_direction(Player,Direction, New_Direction),
