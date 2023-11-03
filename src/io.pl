@@ -55,7 +55,14 @@ ask_for_piece_position(Position):-
 
 isaac_menu(Gamemode):-
     draw_isaac_menu,
+    ask_for_menu_option(Gamemode).
+    
+ask_for_menu_option(Choice):-
     write('Choose an option(1-5): '),
-    read(Gamemode), nl,
-    validate_menu_choice(Gamemode).
+    read(Choice), nl,
+    validate_menu_choice(Choice).
+    
+ask_for_menu_option(Choise):-
+        write('Invalid choice! '),
+        ask_for_menu_option(Choise).
 

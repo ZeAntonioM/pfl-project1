@@ -19,7 +19,7 @@ play:-
 
 
 % Game cycle
-playagain:-
+playagain(Gamemode):-
     Gamemode \= 5,
     play.
 
@@ -29,7 +29,7 @@ playagain(5).
 gamemode(1):-
     phase1cycle("B", FirstPlayerToFinish),
     phase2cycle(FirstPlayerToFinish,0,0,0),
-    check_winner(Won).
+    %check_winner(Won).
 
 check_winner(0).%:-
 
@@ -79,7 +79,7 @@ phase1cycle(Player, Player):-
     \+ can_place_piece(Next_Player).
 
 
-phase2cycle(Player, SCB, SCW, Won):-
+phase2cycle(_Player, SCB, SCW, Won):-
 
     (SCB >= 100,
     write('Black won!'),
@@ -89,7 +89,7 @@ phase2cycle(Player, SCB, SCW, Won):-
     Won is "W").
     
 
-phase2cycle(Player, SCB, SCW, Won):-
+phase2cycle(Player, SCB, SCW, _Won):-
 
     can_remove_piece(Player),
     ask_for_piece_to_remove(Piece_id),
