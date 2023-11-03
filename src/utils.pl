@@ -1,4 +1,5 @@
 :-ensure_loaded('pieces.pl').
+
 print_string_([]):-!.
 print_string_([Head | Rest]):-
         char_code(Char,Head),

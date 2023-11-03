@@ -105,10 +105,13 @@ draw_game_options :-
         write('|                              2. Player vs IA                                |'), nl,
         draw_left_right_border,
         draw_left_right_border,
-        write('|                              3. IA vs IA                                    |'), nl,
+        write('|                              3. IA vs Player                                |'), nl,
         draw_left_right_border,
         draw_left_right_border,
-        write('|                              4. Exit                                        |'), nl,
+        write('|                              4. IA vs IA                                    |'), nl,
+        draw_left_right_border,
+        draw_left_right_border,
+        write('|                              5. Exit                                        |'), nl,
         draw_left_right_border,
         draw_left_right_border.
 
