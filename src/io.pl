@@ -6,6 +6,7 @@
 ask_for_piece_to_add(Player):-
 
         draw_board(Player),
+        player_to_move(Player),
         
         %(can_place_piece(Player,_,_,_)->
         %% true;
@@ -83,3 +84,27 @@ get_points_to_score(Points, PointsToScore) :-
 get_points_to_score(Points, PointsToScore) :-
     write('Invalid number of points. Try again.'), nl,
     get_points_to_score(Points, PointsToScore).
+
+
+ask_for_piece_to_remove(Player, Piece, Direction, New_Position, BiggestPieceB, BiggestPieceW, SCB, SCW):-
+        draw_board(Player),
+        player_to_move(Player),
+        repeat,
+        ask_for_piece_to_remove_message(Piece, Position),
+        convert_position(Player, Position, New_Position),
+        findall(Position, piece_position(Piece, _, Position),  Positions),
+        (can_remove_piece(Player, Piece, BiggestPieceB, BiggestPieceW, Positions, SCB, SCW)->
+                piece_position(Piece, Direction, _),;
+                write('You cannot remove this piece.'), nl, fail
+        ).
+    
+
+
+ask_for_piece_to_remove_message(Piece, Position):-
+        write('Select the position of the piece to remove. It shoud be between 0 and 99:'),
+        read(Piece),
+        validate_position(Piece, Position).
+
+ask_for_piece_to_remove_message(Piece):-
+        nl, write('Invalid Position'),nl,
+        ask_for_piece_to_remove_message(Piece).
