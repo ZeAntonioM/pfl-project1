@@ -2,20 +2,29 @@
 
 play:- isaac_menu.
 
-% main_menu/0
-% menu loop - dispatch the various menu commands.
+
 isaac_menu :- repeat,
              draw_isaac_menu,
              ask_for_menu_option(Selection),
              read(Selection),
              (
-                 Selection = 5;
+                 Selection = 10;
                  gamemode(Selection),fail
              ).
 
+ %player_robot(Player, easy)
+%player_robot(Player,hard)
 
 gamemode(1) :- play_game.
 
+gamemode(2) :- play_game.
+gamemode(3) :- play_game.
+gamemode(4) :- play_game.
+gamemode(5) :- play_game.
+gamemode(6) :- play_game.
+gamemode(7) :- play_game.
+gamemode(8) :- play_game.
+gamemode(9) :- play_game.
 
 play_game :-
             retractall(piece_position(_,_,_)),
@@ -27,7 +36,7 @@ play_game :-
             asserta(sc("B",0)),
             asserta(bpr("W",0)),
             asserta(bpr("B",0)),
-            populate,
+            %populate,
             game_state(start, "W").
     
 

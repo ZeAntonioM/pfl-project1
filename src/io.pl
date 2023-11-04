@@ -57,7 +57,7 @@ isaac_menu(Gamemode):-
     ask_for_menu_option(Gamemode).
     
 ask_for_menu_option(Choice):-
-    write('Choose an option(1-5): '),
+    write('Choose an option(1-10): '),
     read(Choice), nl,
     validate_menu_choice(Choice).
     

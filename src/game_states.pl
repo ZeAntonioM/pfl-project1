@@ -4,6 +4,7 @@
 %%%%%%%% display %%%%%%%%%%%%
 
 display(start,_).
+%display(_,Player):-player_robot(Player,_).
 display(_,Player):-
         draw_board(Player),
         sc("W", SCW),
