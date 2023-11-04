@@ -6,10 +6,11 @@ play:- isaac_menu.
 % menu loop - dispatch the various menu commands.
 isaac_menu :- repeat,
              draw_isaac_menu,
+             ask_for_menu_option(Selection),
              read(Selection),
              (
                  Selection = 5;
-                 gamemode(Selection), fail
+                 gamemode(Selection),fail
              ).
 
 
@@ -26,7 +27,7 @@ play_game :-
             asserta(sc("B",0)),
             asserta(bpr("W",0)),
             asserta(bpr("B",0)),
-            %populate,
+            populate,
             game_state(start, "W").
     
 
