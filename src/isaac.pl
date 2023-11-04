@@ -6,9 +6,9 @@ play:-
     retractall(piece_position(_,_,_)),
 
     % Sets the board
-    asserta((piece_position(_,_,_):-fail)),
+    %asserta((piece_position(_,_,_):-fail)),
 
-    %populate(10,99),
+    populate,
 
     % Menu e ver o modo 
     isaac_menu(Gamemode),
@@ -41,8 +41,20 @@ check_winner("W").
 
 % 1 - Player vs Player
 gamemode(1):-
-    phase1cycle("B", FirstPlayerToFinish),
-    phase2cycle(FirstPlayerToFinish, 0, 0, 0, 0, 0).
+    phase(players_add_pieces,"B",First_player_to_finish),
+    phase(both_player_remove_pieces,First_player_to_finish, Scb,Scw, BRP, First_Player_To_Stop ),
+    (
+        (
+            (Scb>=100;
+            Scw>=100),
+            winner(Scb,Scw),!
+            );
+        (
+            phase(one_player_removes_pieces,First_Player_To_Stop,BRP, Scb, Scw,New_Scb, New_Scw),
+            winner(New_Scb,New_Scw),!
+        )
+     ),
+    
     %check_winner(Won).
 
 % 2 - Player vs Computer
@@ -64,73 +76,74 @@ gamemode(4).%:-
 gamemode(5).
 
 %while the 2 players can play
-phase1cycle(Player, First_Player_To_Finish):-
+phase(players_add_pieces,Player, First_Player_To_Finish):-
 
     can_place_piece(Player, _, _, _),
     ask_for_piece_to_add(Player),
     change_player(Player, Next_Player),
-    phase1cycle(Next_Player, First_Player_To_Finish).
+    phase(players_add_pieces,Next_Player, First_Player_To_Finish).
 
 
 %if first player finishes
-phase1cycle(Player, Player):-
-
+phase(players_add_pieces,Player, Player):-
     change_player(Player, Next_Player),
     can_place_piece(Next_Player, _, _, _),
     repeat,
     ask_for_piece_to_add(Player),    
     \+ can_place_piece(Next_Player, _, _, _).
 
-phase1cycle(Player,Player):-
+phase(players_add_pieces,Player, Player):-
     write('Both players cannot play anymore!'),
     draw_board(Player).
     
 
-%phase2cycle(Player, SCB, SCW, BiggestPieceB, BiggestPieceW, Won):-
-%
-%    can_remove_pieces(Player, BiggestPieceB, BiggestPieceW, SCB, SCW),
-%    ask_for_piece_to_remove(Player, Piece, Positions),
-%    remove_piece(Piece),
-%    calculate_points(Player, Piece, Direction, Positions, SCB, SCW, Points),
-%    finish_move(Player, SCB, SCW, Piece, Points).
-%    change_player(Player, NewPlayer),
-%    phase2cycle(NewPlayer, SCB, SCW, BiggestPieceB, BiggestPieceW, Won).
-%    
-%phase2cycle(Player, SCB, SCW, BiggestPieceB, BiggestPieceW, Won):-
-%
-%    change_player(Player, NewPlayer),
-%    (repeat,
-%    ask_for_piece_to_remove(Player, Piece),
-%    remove_piece(Piece),
-%    calculate_points(Player, Piece, Direction, Positions, SCB, SCW, Points),
-%    finish_move(Player, SCB, SCW, Piece, Points).
-%    \+ can_remove_piece(NewPlayer, BiggestPieceB, BiggestPieceW, SCB, SCW),
-%    check_winner(Won).
-%    
-%phase2cycle(Player, SCB, SCW, BiggestPieceB, BiggestPieceW, Won).
+phase(both_player_remove_pieces,Player, Scb,Scw, BRP, First_Player_To_Stop ):-
+    phase(both_player_remove_pieces,Player, 0,0,0,0, Scb,Scw, BRP, First_Player_To_Stop)
+    .
+ 
+phase(Phase,_, Scb,Scw,_,_, Scb,Scw, _, _):-
+    (Phase =both_player_remove_pieces;
+     Phase = one_player_removes_pieces ),
+    (Scb>=100;
+    Scw>=100).
+ 
+phase(both_player_remove_pieces,Player, Scb,Scw,BRPB,BRPW, F_Scb,F_Scw, BRP, F_Player):-
 
-%normal cycle of phase 2
-phase2cycle(Player, SCB, SCW, BiggestPieceB, BiggestPieceW):-
+    can_remove_pieces(Player, BRPB, BRPW, Scb, Scw),
 
-    can_remove_pieces(Player, BiggestPieceB, BiggestPieceW, SCB, SCW),
-    ask_for_piece_to_remove(Player, Piece, Direction, Position, BiggestPieceB, BiggestPieceW, SCB, SCW),
+    ask_for_piece_to_remove(Player, Piece, Direction, Position, BRPB, BRPW, Scb, Scw),!,
+     
     remove_piece(Piece),
-    calculate_points(Player, Piece, Position, Direction, SCB, SCW, Points),
+        draw_board(Player),
+    calculate_points( Piece, Position, Direction, Scb, Scw, Points),
     get_points_to_score(Points, PointsToScore),
-    score_points(Player, SCB, SCW, PointsToScore, NewSCB, NewSCW),
-    loop2phase(Player, NewSCB, NewSCW, BiggestPieceB, BiggestPieceW).
+    score_points(Player, Scb, Scw, PointsToScore, NewSCB, NewSCW),
+    change_player(Player, Next_P),
+    phase(both_player_remove_pieces,Next_P, NewSCB,NewSCW,BRPB,BRPW, F_Scb,F_Scw, BRP, F_Player)
+    . 
 
-% One player cannot remove pieces
-phase2cycle(Player, SCB, SCW, BiggestPieceB, BiggestPieceW):-
+phase(both_player_remove_pieces,"B", Scb,Scw,BRPB,_BRPW, Scb,Scw, BRPB, "B").
+phase(both_player_remove_pieces,"W", Scb,Scw,_BRPB,BRPW, Scb,Scw, BRPW, "W").
 
-    can_remove_pieces(Player, BiggestPieceB, BiggestPieceW, SCB, SCW),
-    repeat,
-    ask_for_piece_to_remove(Player, Piece, Direction, Position, BiggestPieceB, BiggestPieceW, SCB, SCW),
+phase(one_player_removes_pieces,Player ,BRP, Scb, Scw,F_Scb, F_Scw):-
+    can_remove_pieces(Player, BRPB, BRPW, Scb, Scw),
+   
+    ask_for_piece_to_remove(Player, Piece, Direction, Position, BRPB, BRPW, Scb, Scw),
     remove_piece(Piece),
-    calculate_points(Player, Piece, Position, Direction, SCB, SCW, Points),
+    calculate_points( Piece, Position, Direction, Scb, Scw, Points),
     get_points_to_score(Points, PointsToScore),
-    score_points(Player, SCB, SCW, PointsToScore, NewSCB, NewSCW),
-    (check_continue_2_phase(Player, NewSCB, NewSCW);
-    /+ can_remove_pieces(Player, BiggestPieceB, BiggestPieceW, SCB, SCW)).
+    score_points(Player, Scb, Scw, PointsToScore, NewSCB, NewSCW),
+    phase(one_player_removes_pieces,Player, BRP,NewSCB,NewSCW, F_Scb,F_Scw).
 
-%desempate
+phase(one_player_removes_pieces,_Player ,_BRP, Scb, Scw,Scb, Scw).
+
+winner(Scb, Scw):-
+    Scb>Scw,
+    write('Black Won')
+    .
+
+winner(Scb, Scw):-
+    Scw>Scb,
+    write('White Won')
+    .
+winner(_,_):-write('Hallo').

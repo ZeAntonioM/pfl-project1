@@ -78,7 +78,7 @@ get_points_to_score(Points, PointsToScore) :-
     write('You have removed a piece from the board and can score from 1 to '), write(Points), write(' points.'), nl,
     write('Choose the number of points you want to score: '), nl,
     read(PointsToScore),
-    PointsToScore > 0,
+    PointsToScore >= 0,
     PointsToScore =< Points.
 
 get_points_to_score(Points, PointsToScore) :-
@@ -90,21 +90,31 @@ ask_for_piece_to_remove(Player, Piece, Direction, New_Position, BiggestPieceB, B
         draw_board(Player),
         player_to_move(Player),
         repeat,
-        ask_for_piece_to_remove_message(Piece, Position),
+        write('Coube'),
+        ask_for_piece_to_remove_message( Position),
+        write('Coube'),
         convert_position(Player, Position, New_Position),
-        findall(Position, piece_position(Piece, _, Position),  Positions),
+        write('Coube'),
+        (piece_position(Piece, _, New_Position)->
+                true;
+                write('Position is empty'),fail
+         ),
+        write('Coube'),
+        findall(Position_, piece_position(Piece, _, Position_),  Positions),
         (can_remove_piece(Player, Piece, BiggestPieceB, BiggestPieceW, Positions, SCB, SCW)->
-                piece_position(Piece, Direction, _),;
+                piece_position(Piece, Direction, _);
                 write('You cannot remove this piece.'), nl, fail
-        ).
+        ),
+        write('Coube').
     
 
 
-ask_for_piece_to_remove_message(Piece, Position):-
+ask_for_piece_to_remove_message( Position):-
         write('Select the position of the piece to remove. It shoud be between 0 and 99:'),
-        read(Piece),
-        validate_position(Piece, Position).
+        read(Position),
+        validate_position( Position).
+        
 
-ask_for_piece_to_remove_message(Piece):-
-        nl, write('Invalid Position'),nl,
-        ask_for_piece_to_remove_message(Piece).
+ask_for_piece_to_remove_message( Position):-
+        nl, write('Invalid Position 4'),nl,
+        ask_for_piece_to_remove_message(Position).

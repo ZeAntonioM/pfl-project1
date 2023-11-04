@@ -55,14 +55,19 @@ validate_piece_to_remove(Piece):-
         piece_position(Piece,_Direction,_Position).
 
 
-can_remove_piece("B", Piece, BiggestPieceB, BiggestPieceW, Positions, SCB, SCW):-
-    can_remove_piece("B", BiggestPieceB, Positions, SCB, SCW).
+can_remove_piece("B", Piece, BiggestPieceB, _BiggestPieceW, Positions, SCB, SCW):-
+    can_remove_piece( "B",Piece,Positions,BiggestPieceB, SCB, SCW),!.
 
-can_remove_piece("W", Piece, BiggestPieceB, BiggestPieceW, Positions, SCB, SCW):-
-    can_remove_piece("W", BiggestPieceW, Positions, SCB, SCW).
+can_remove_piece("W", Piece, _BiggestPieceB, BiggestPieceW, Positions, SCB, SCW):-
+    can_remove_piece( "W",Piece,Positions,BiggestPieceW, SCB, SCW),!.
 
-can_remove_piece(Player, Piece, Positions, BiggestPiece, SCB, SCW):-
+can_remove_piece(Player,Piece, Positions, BiggestPiece, SCB, SCW):-
+    piece_owner(Piece,Player),
     piece_size(Piece, SizeP),
-    SizeP >= BiggestPiece,
-    \+ member(SCB, Positions),
-    \+ member(SCW, Positions).
+    SizeP >= BiggestPiece,!,
+   write('Arroz1'),
+    \+ member(SCB, Positions),!,
+    write('Arroz2'),
+    \+ member(SCW, Positions),!,
+    write('Arroz3').
+

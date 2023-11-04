@@ -2,6 +2,7 @@
 :- use_module(library(between)).
 :- ensure_loaded('pieces.pl').
 :- ensure_loaded('io.pl').
+:- ensure_loaded('utils.pl').
 
 
 % Changes the player
@@ -59,19 +60,20 @@ add_piece(Piece,Size,Direction, Position):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 can_remove_pieces(Player, BiggestPieceB, BiggestPieceW, SCB, SCW):-
-    setof(Piece, Direction^Position^(piece_position(Piece, Direction, Position), piece_owner(Piece, Player)), Pieces),
-    can_remove_pieces(Player, Pieces, BiggestPieceB, BiggestPieceW), SCB, SCW.
+    setof(Piece, Player^Direction^Position^(piece_position(Piece, Direction, Position),piece_owner(Piece, Player)), Pieces),
+    write_list_(Pieces),nl,
+    can_remove_pieces(Player, Pieces, BiggestPieceB, BiggestPieceW, SCB, SCW).
 
-can_remove_pieces(Player, [], BiggestPieceB, BiggestPieceW, SCB, SCW).
-can_remove_pieces("B", [Piece|T], BiggestPieceB, BiggestPieceW) :-
+can_remove_pieces(_Player, [], _BiggestPieceB, _BiggestPieceW, _SCB, _SCW).
+can_remove_pieces("B", [Piece|_T], BiggestPieceB, BiggestPieceW, SCB, SCW) :-
     findall(Position, piece_position(Piece, _, Position),  Positions),
     can_remove_piece("B", Piece, BiggestPieceB, BiggestPieceW, Positions, SCB, SCW).
 
-can_remove_pieces("W", [Piece|T], BiggestPieceB, BiggestPieceW, SCB, SCW) :-
+can_remove_pieces("W", [Piece|_T], BiggestPieceB, BiggestPieceW, SCB, SCW) :-
     findall(Position, piece_position(Piece, _, Position),  Positions),
     can_remove_piece("W", Piece, BiggestPieceB, BiggestPieceW, Positions, SCB, SCW).
 
-can_remove_pieces(Player, [Piece|T], BiggestPieceB, BiggestPieceW, SCB, SCW) :-
+can_remove_pieces(Player, [_Piece|T], BiggestPieceB, BiggestPieceW, SCB, SCW) :-
     can_remove_pieces(Player, T, BiggestPieceB, BiggestPieceW, SCB, SCW).
 
 
@@ -80,27 +82,37 @@ remove_piece(Piece) :-
     retractall(piece_position(Piece, _, _)).
 
 % Calculates the points of the move
-calculate_points(Player, Piece, Direction, Position, SCB, SCW, Points) :-
-    get_line_values(Direction, Positions, Values),
+calculate_points( Piece, Position, Direction, SCB, SCW, Points) :-
+    get_line_values(Direction, Position, Values),!,
+    write_list_(Values),nl,
     pieces_in_line(Values, Pieces),
+    write(Pieces),nl,
     sc_in_line(Values, SCB, SCW, SC),
+       write(SC),nl,
     piece_value(Piece, Value),
+        write(Value),nl,
     multiply_points(Pieces, Value, SC, Points).
+
 
 % Gets the values of the line
 get_line_values(h, Position, Values) :-
     Line is Position div 10,
-    findall(V, between(0+(10*Line), 9+(10*Line), V), Values).
+    Start is (10*Line + 0),
+    End is (10*Line +9),
+    findall(V, between(Start,End , V), Values)
+    .
 
 get_line_values(v, Position, Values) :-
     Column is Position mod 10,
-    append([], [Column, Column+10, Column+20, Column+30, Column+40, Column+50, Column+60, Column+70, Column+80, Column+90], Values).
-
+    generate_columns(Column, Values).
 
 % Checks the number of pieces in the line
 pieces_in_line(Values, Pieces) :-
     setof(Id, Direction^Position^(piece_position(Id,Direction,Position), member(Position, Values)),Res),
+    write_list_(Res),
     length(Res, Pieces).
+
+pieces_in_line(_Values, 0).
     
     
 % Checks the number of score counters in the line
@@ -111,11 +123,11 @@ sc_in_line([Value|T], SCB, SCW, SC) :-
     SC is SC1 + 1.
 
 sc_in_line([Value|T], SCB, SCW, SC) :-
-    Value == SCW,
+    Value == 99 -SCW,
     sc_in_line(T, SCB, SCW, SC1),
     SC is SC1 + 1.
 
-sc_in_line([Value|T], SCB, SCW, SC) :-
+sc_in_line([_Value|T], SCB, SCW, SC) :-
     sc_in_line(T, SCB, SCW, SC).
 
 multiply_points(Pieces, Value, 0, Points):-
@@ -130,26 +142,34 @@ score_points("B", SCB, SCW, PointsToScore, NewSCB, NewSCW) :-
     NewSCW is SCW.
 
 score_points("W", SCB, SCW, PointsToScore, NewSCB, NewSCW) :-
-    NewScw is SCW + PointsToScore,
+    NewSCW is SCW + PointsToScore,
     NewSCB is SCB.
 
+populate:-
+              add_piece(15,7,u,0),
+              add_piece(14,6,u,1),
+              add_piece(13,6,u,2),
+              add_piece(12,5,u,3),
+              add_piece(11,5,u,4),
+              add_piece(10,5,u,5),
+              add_piece(9,4,u,6),
+              add_piece(8,4,u,7),
+              add_piece(7,4,u,8),
+              add_piece(1,3,u,9),
 
-loop2phase("B", SCB, SCW, BiggestPieceB, BiggestPieceW):-
-    SCB < 100,
-    phase2cycle("W", SCB, SCW, BiggestPieceB, BiggestPieceW).
-
-loop2phase("B", SCB, SCW, BiggestPieceB, BiggestPieceW):-
-    write('Player B Won! Congratulations!').
-
-loop2phase("W", SCB, SCW, BiggestPieceB, BiggestPieceW):-
-    SCW < 100,
-    phase2cycle("B", SCB, SCW, BiggestPieceB, BiggestPieceW).
-
-loop2phase("W", SCB, SCW, BiggestPieceB, BiggestPieceW):-
-    write('Player W Won! Congratulations!').
-
-check_continue_2_phase("B", SCB, SCW):-
-    SCB >= 100.
-
-check_continue_2_phase("W", SCB, SCW):-
-    SCW >= 100.
+              %add_piece(30,7,d,99),
+              %add_piece(29,6,d,98),
+              %add_piece(28,6,d,97),
+              add_piece(17,3,r,97),
+              add_piece(27,5,d,96),
+              add_piece(26,5,d,95),
+              add_piece(25,5,d,94),
+              add_piece(24,4,d,93),
+              add_piece(23,4,d,92),
+              add_piece(22,4,d,91),
+              add_piece(16,3,d,90)
+              
+              
+              
+              
+              .

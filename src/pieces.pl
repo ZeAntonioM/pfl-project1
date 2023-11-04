@@ -32,7 +32,8 @@ piece_owner(Piece,"B"):-
 piece_owner(Piece,"W"):-
     piece(Piece),
     number_of_Pieces_per_Player(N),
-    Piece=<2*N.
+    Piece=<2*N,
+    Piece>N.
 
 % piece_size(Piece,Size) - Size of the Piece
 piece_size(Piece,Size):-
