@@ -22,10 +22,10 @@ play:-
 
 % Game cycle
 playagain(Gamemode):-
-    Gamemode \= 5,
+    Gamemode \= 10,
     play.
 
-playagain(5).
+playagain(10).
 
 
 check_winner(0).%:-
@@ -57,23 +57,32 @@ gamemode(1):-
     
     %check_winner(Won).
 
-% 2 - Player vs Computer
+% 2 - Player vs Easy IA
 gamemode(2).%:-
-    
-%.
 
-% 3 - Computer vs Human
-gamemode(3).%:-
-    
-%.
+% 3 - Easy IA vs Player   
+gamemode(3).
 
-% 4 - Computer vs Computer
-gamemode(4).%:-
-    
-%.
+% 4 - Player vs Hard IA
+gamemode(4).
 
-% 5 - Exit the game
+% 5 - Hard IA vs Player
 gamemode(5).
+
+% 6 - Easy IA vs Hard IA
+gamemode(6).
+
+% 7 - Hard IA vs Easy IA
+gamemode(7).
+
+% 8 - Easy IA vs Easy IA
+gamemode(8).
+
+% 9 - Hard IA vs Hard IA
+gamemode(9).
+
+% 10 - Exit
+gamemode(10).
 
 %while the 2 players can play
 phase(players_add_pieces,Player, First_Player_To_Finish):-

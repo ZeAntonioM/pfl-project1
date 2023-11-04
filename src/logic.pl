@@ -5,9 +5,10 @@
 :- ensure_loaded('utils.pl').
 
 
-% Changes the player
+% Changes the player from W to B
 change_player("W", "B").
 
+% Changes the player from B to W
 change_player("B", "W").
 
 
