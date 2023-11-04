@@ -15,17 +15,21 @@ change_player("B", "W").
 %%%%%%%%%%%%%%%%%% 1st PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-can_place_piece(Player,P,Size,Direction):-
-        can_place_piece(Player, P, Size,Direction, 3).
 
-can_place_piece(Player,P,Acc,Direction, Acc):-
-        valid_position(Acc,P,Direction),
+can_place_pieces(Player, Pieces):-
+        findall(Size-Direction-Position,can_place_piece(Player,Position,Size,Direction), Pieces ).
+
+can_place_piece(Player,Position,Size,Direction):-
+        can_place_piece(Player, Position, Size,Direction, 3).
+
+can_place_piece(Player,Position,Acc,Direction, Acc):-
+        valid_position(Acc,Position,Direction),
         valid_piece(Player, Acc,_Piece).
 
-can_place_piece(Player,P,Size,Direction, Acc):-
+can_place_piece(Player,Position,Size,Direction, Acc):-
         validate_size(Acc),
         Acc2 is Acc +1,
-        can_place_piece(Player,P,Size,Direction, Acc2).
+        can_place_piece(Player,Position,Size,Direction, Acc2).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 populate(Pos1, Pos2):-
         assertz((piece_position(_,_,_):-fail)),
@@ -59,29 +63,28 @@ add_piece(Piece,Size,Direction, Position):-
 %%%%%%%%%%%%%%%%%% 2nd PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-can_remove_pieces(Player, BiggestPieceB, BiggestPieceW, SCB, SCW):-
-    setof(Piece, Player^Direction^Position^(piece_position(Piece, Direction, Position),piece_owner(Piece, Player)), Pieces),
-    can_remove_pieces(Player, Pieces, BiggestPieceB, BiggestPieceW, SCB, SCW).
+can_remove_pieces(Player, Pieces):-
+    setof(
+             Piece,
+             Player^Direction^Position^(
+                                           piece_position(Piece, Direction, Position),
+                                           piece_owner(Piece, Player),
+                                           can_remove_piece(Player, Piece)
+                                       ),
+             Pieces
+         )
+    .
 
-can_remove_pieces(_Player, [], _BiggestPieceB, _BiggestPieceW, _SCB, _SCW):-fail.
-can_remove_pieces("B", [Piece|_T], BiggestPieceB, BiggestPieceW, SCB, SCW) :-
-    findall(Position, piece_position(Piece, _, Position),  Positions),
-    can_remove_piece("B", Piece, BiggestPieceB, BiggestPieceW, Positions, SCB, SCW).
-
-can_remove_pieces("W", [Piece|_T], BiggestPieceB, BiggestPieceW, SCB, SCW) :-
-    findall(Position, piece_position(Piece, _, Position),  Positions),
-    can_remove_piece("W", Piece, BiggestPieceB, BiggestPieceW, Positions, SCB, SCW).
-
-can_remove_pieces(Player, [_Piece|T], BiggestPieceB, BiggestPieceW, SCB, SCW) :-
-    can_remove_pieces(Player, T, BiggestPieceB, BiggestPieceW, SCB, SCW),!.
-
+can_remove_pieces(_, []).
 
 % removes the piece from the board
 remove_piece(Piece) :-
     retractall(piece_position(Piece, _, _)).
 
 % Calculates the points of the move
-calculate_points( Piece, Position, Direction, SCB, SCW, Points) :-
+calculate_points( Piece, Position, Direction, Points) :-
+     sc("W", SCW),
+     sc("B", SCB),
     get_line_values(Direction, Position, Values),!,
     pieces_in_line(Values, Pieces),
     sc_in_line(Values, SCB, SCW, SC),
@@ -131,20 +134,17 @@ multiply_points(Pieces, Value, 0, Points):-
 multiply_points(Pieces, Value, SC, Points) :-
     Points is Pieces * Value * 2 * SC.
     
-% Scores the points
-score_points("B", SCB, SCW, PointsToScore, NewSCB, NewSCW) :-
-    NewSCB is SCB + PointsToScore,
-    NewSCW is SCW.
 
-score_points("W", SCB, SCW, PointsToScore, NewSCB, NewSCW) :-
-    NewSCW is SCW + PointsToScore,
-    NewSCB is SCB.
+score_points(Player , SC, PointsToScore) :-
+     Points is SC + PointsToScore,
+    retractall(sc(Player,_)),
+    asserta(sc(Player,Points)).
 
-update_biggest_piece("W", Piece, BPRB, BPRW,BPRB, Size):- piece_size(Piece,Size),between(BPRW,7, Size) .
-update_biggest_piece("B", Piece, BPRB, BPRW,Size, BPRW):-piece_size(Piece,Size),between(BPRB,7, Size).
-update_biggest_piece(_, _, BPRB, BPRW,BPRB, BPRW).
-update_biggest_piece(Piece, BPR, Size):-piece_size(Piece,Size), between(BPR,7, Size).
-update_biggest_piece(_, BPR, BPR).
+update_biggest_piece(Player, Piece, BPR):-
+        piece_size(Piece,Size),
+        between(BPR,7, Size),
+        retractall(bpr(Player,_)),
+        asserta(bpr(Player,Size)).
 
 populate:-
               add_piece(15,7,u,0),

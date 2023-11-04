@@ -55,17 +55,15 @@ validate_piece_to_remove(Piece):-
         piece_position(Piece,_Direction,_Position).
 
 
-can_remove_piece("B", Piece, BiggestPieceB, _BiggestPieceW, Positions, SCB, SCW):-
-    can_remove_piece( "B",Piece,Positions,BiggestPieceB, SCB, SCW),!.
-
-can_remove_piece("W", Piece, _BiggestPieceB, BiggestPieceW, Positions, SCB, SCW):-
-    can_remove_piece( "W",Piece,Positions,BiggestPieceW, SCB, SCW),!.
-
-can_remove_piece(Player,Piece, Positions, BiggestPiece, SCB, SCW):-
+can_remove_piece(Player,Piece):-
     piece_owner(Piece,Player),
+    findall(Position, piece_position(Piece, _, Position),  Positions),
+    sc("W",SCW),
+    sc("B",SCB),
+    bpr(Player,BPR),
     piece_size(Piece, SizeP),!,
     New_SCW is 99 - SCW,
-    SizeP >= BiggestPiece,!,
+    SizeP >= BPR,!,
     \+ member(SCB, Positions),!,
     \+ member(New_SCW, Positions),!.
 

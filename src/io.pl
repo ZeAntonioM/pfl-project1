@@ -3,15 +3,8 @@
 :-ensure_loaded('draw.pl').
 :-ensure_loaded('logic.pl').
 
-ask_for_piece_to_add(Player):-
+ask_for_piece_to_add(Player, Piece, New_Direction , New_Position):-
 
-        draw_board(Player),
-        player_to_move(Player),
-        
-        %(can_place_piece(Player,_,_,_)->
-        %% true;
-        % write('You cannot place more pieces'),nl,fail
-        % ),
         repeat,
         ask_for_piece_to_add_message(Size, Direction, Position),
         convert_direction(Player,Direction, New_Direction),
@@ -23,8 +16,7 @@ ask_for_piece_to_add(Player):-
         (valid_position(Size,New_Position,New_Direction)->
          true;
          write('This Piece can not be placed like that'),nl,fail
-         ),
-        add_piece(Piece,Size,New_Direction, New_Position).
+         ).
 
 
 ask_for_piece_to_add_message(Size, Direction, Position):-
@@ -75,7 +67,7 @@ ask_for_menu_option(Choise):-
 
 % Gets the points to score
 get_points_to_score(Points, PointsToScore) :-
-    write('You have removed a piece from the board and can score from 1 to '), write(Points), write(' points.'), nl,
+    write('You have removed a piece from the board and can score from 0 to '), write(Points), write(' points.'), nl,
     write('Choose the number of points you want to score: '), nl,
     read(PointsToScore),
     PointsToScore >= 0,
@@ -86,10 +78,7 @@ get_points_to_score(Points, PointsToScore) :-
     get_points_to_score(Points, PointsToScore).
 
 
-ask_for_piece_to_remove(Player, Piece, Direction, New_Position, BiggestPieceB, BiggestPieceW, SCB, SCW):-
-        draw_board(Player),
-        draw_SC(Player, SCB, SCW),
-        player_to_move(Player),
+ask_for_piece_to_remove(Player, Piece, Direction, New_Position):-
         repeat,
         ask_for_piece_to_remove_message( Position),
         convert_position(Player, Position, New_Position),
@@ -97,8 +86,7 @@ ask_for_piece_to_remove(Player, Piece, Direction, New_Position, BiggestPieceB, B
                 true;
                 write('Position is empty'),fail
          ),
-        findall(Position_, piece_position(Piece, _, Position_),  Positions),
-        (can_remove_piece(Player, Piece, BiggestPieceB, BiggestPieceW, Positions, SCB, SCW)->
+        (can_remove_piece(Player, Piece)->
                 piece_position(Piece, Direction, _);
                 write('You cannot remove this piece.'), nl, fail
         ).
@@ -112,5 +100,5 @@ ask_for_piece_to_remove_message( Position):-
         
 
 ask_for_piece_to_remove_message( Position):-
-        nl, write('Invalid Position 4'),nl,
+        nl, write('Invalid Piece'),nl,
         ask_for_piece_to_remove_message(Position).
