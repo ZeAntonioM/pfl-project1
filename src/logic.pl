@@ -2,18 +2,44 @@
 :- use_module(library(between)).
 :- ensure_loaded('pieces.pl').
 :- ensure_loaded('io.pl').
+:- ensure_loaded('utils.pl').
+
+
+% Changes the player
+change_player("W", "B").
+
+change_player("B", "W").
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%% 1st PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-can_place_piece(Player).% :-
-  
 
+can_place_pieces(Player, Pieces):-
+        findall(Size-Direction-Position,can_place_piece(Player,Position,Size,Direction), Pieces ).
 
+can_place_piece(Player,Position,Size,Direction):-
+        can_place_piece(Player, Position, Size,Direction, 3).
 
-%.
+can_place_piece(Player,Position,Acc,Direction, Acc):-
+        valid_position(Acc,Position,Direction),
+        valid_piece(Player, Acc,_Piece).
 
+can_place_piece(Player,Position,Size,Direction, Acc):-
+        validate_size(Acc),
+        Acc2 is Acc +1,
+        can_place_piece(Player,Position,Size,Direction, Acc2).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+populate(Pos1, Pos2):-
+        assertz((piece_position(_,_,_):-fail)),
+        Pos1<Pos2,
+        asserta(piece_position(1,h,Pos1)),
+        Pos3 is Pos1 +1,
+        populate(Pos3,Pos2).
+
+populate(Pos1,Pos1).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 add_piece(_,0,_,_).
 
 add_piece(Piece,Size,Direction, Position):-
@@ -37,94 +63,115 @@ add_piece(Piece,Size,Direction, Position):-
 %%%%%%%%%%%%%%%%%% 2nd PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+can_remove_pieces(Player, Pieces):-
+    setof(
+             Piece,
+             Player^Direction^Position^(
+                                           piece_position(Piece, Direction, Position),
+                                           piece_owner(Piece, Player),
+                                           can_remove_piece(Player, Piece)
+                                       ),
+             Pieces
+         )
+    .
 
-% Move in second phase. Checks if it's possible to remove a piece from the board, and if so, removes it. After that, calculates the points and finishes the move.
-move2P(Player, Piece_id, SCB, SCW) :-
-    findall(Position, piece_position(Piece_id, _, Position),  Positions),
-    piece_position(Piece_id, Direction, _),
-    check_move(Player, Piece_id, Positions, SCB, SCW),
-    remove_piece(Piece_id),
-    calculate_points(Player, Piece_id, Direction, Positions, SCB, SCW, Points),
-    finish_move(Player, SCB, SCW, Piece_id, Points).
-
-% Checks if the move is valid
-check_move(Player, Piece_id, Positions, SCB, SCW) :-
-    piece_owner(Player, Piece_id), %Checks if the piece belongs to the player
-    check_valid_remove(Positions, SCB, SCW).    %Checks if there is a Score Counter in the piece's positions
-
-check_valid_remove([], _, _).
-check_valid_remove([Position|T], SCB, SCW) :-
-    check_valid_remove(T, SCB, SCW),
-    Position \= SCB,
-    Position \= SCW.
+can_remove_pieces(_, []).
 
 % removes the piece from the board
-remove_piece(Piece_id) :-
-    retractall(piece_position(Piece_id, _, _)).
+remove_piece(Piece) :-
+    retractall(piece_position(Piece, _, _)).
 
 % Calculates the points of the move
-calculate_points(Player, Piece_id, Direction, Positions, SCB, SCW, Points) :-
-    get_line_values(Direction, Positions, Values),
+calculate_points( Piece, Position, Direction, Points) :-
+     sc("W", SCW),
+     sc("B", SCB),
+    get_line_values(Direction, Position, Values),!,
     pieces_in_line(Values, Pieces),
     sc_in_line(Values, SCB, SCW, SC),
-    piece_value(Piece_id, Value),
-    Points is (Pieces * Value)*SC.
+    piece_value(Piece, Value),
+    multiply_points(Pieces, Value, SC, Points).
+
 
 % Gets the values of the line
-get_line_values(h, [Position|T], Values) :-
+get_line_values(h, Position, Values) :-
     Line is Position div 10,
-    findall(V, between(0+(1*Line), 9+(1*Line), V), Values).
+    Start is (10*Line + 0),
+    End is (10*Line +9),
+    findall(V, between(Start,End , V), Values)
+    .
 
-get_line_values(v, [Position|T], Values) :-
+get_line_values(v, Position, Values) :-
     Column is Position mod 10,
-    append([], [Column, Column+10, Column+20, Column+30, Column+40, Column+50, Column+60, Column+70, Column+80, Column+90], Values).
-
+    generate_columns(Column, Values).
 
 % Checks the number of pieces in the line
 pieces_in_line(Values, Pieces) :-
     setof(Id, Direction^Position^(piece_position(Id,Direction,Position), member(Position, Values)),Res),
     length(Res, Pieces).
+
+pieces_in_line(_Values, 0).
     
     
 % Checks the number of score counters in the line
 sc_in_line([], _, _, 0).
 sc_in_line([Value|T], SCB, SCW, SC) :-
     Value == SCB,
-    SC is SC1 + 1,
-    sc_in_line(T, SCB, SCW, SC1).
+    sc_in_line(T, SCB, SCW, SC1),
+    SC is SC1 + 1.
 
 sc_in_line([Value|T], SCB, SCW, SC) :-
-    Value == SCW,
-    SC is SC1 + 1,
-    sc_in_line(T, SCB, SCW, SC1).
+    NEW_SCW is 99 - SCW,
+    Value == NEW_SCW,
+    sc_in_line(T, SCB, SCW, SC1),
+    SC is SC1 + 1.
 
-sc_in_line([Value|T], SCB, SCW, SC) :-
+sc_in_line([_Value|T], SCB, SCW, SC) :-
     sc_in_line(T, SCB, SCW, SC).
 
+multiply_points(Pieces, Value, 0, Points):-
+    Points is Pieces * Value.
 
-% Finishes the move
-finish_move(Player, SCB, SCW, Piece_id, Points) :-
-    get_points_to_score(Points, PointsToScore),
-    score_points(Player, SCB, SCW, Points).
+multiply_points(Pieces, Value, SC, Points) :-
+    Points is Pieces * Value * 2 * SC.
     
-% Scores the points
-score_points(Player, SCB, SCW, Points) :-
-    Player == 'B',
-    SCB1 is SCB + PointsToScore,
-    SCB is SCB1.
 
-score_points(Player, PointsToScore, SCB, SCW, Points) :-
-    Player == 'W',
-    SCW1 is SCW + PointsToScore,
-    SCW is SCW1.
+score_points(Player , SC, PointsToScore) :-
+     Points is SC + PointsToScore,
+    retractall(sc(Player,_)),
+    asserta(sc(Player,Points)).
 
-% Changes the player
-change_player(Player, NewPlayer) :-
-    Player == 'W',
-    NewPlayer is 'B'.
+update_biggest_piece(Player, Piece, BPR):-
+        piece_size(Piece,Size),
+        between(BPR,7, Size),
+        retractall(bpr(Player,_)),
+        asserta(bpr(Player,Size)).
 
-change_player(Player, NewPlayer) :-
-    Player == 'B',
-    NewPlayer is 'W'.
+populate:-
+              add_piece(15,7,u,0),
+              add_piece(14,6,u,1),
+              add_piece(13,6,u,2),
+              add_piece(12,5,u,3),
+              add_piece(11,5,u,4),
+              add_piece(10,5,u,5),
+              add_piece(9,4,u,6),
+              add_piece(8,4,u,7),
+              add_piece(7,4,u,8),
+              add_piece(1,3,u,9),
+              add_piece(2,3,d,68),
+              add_piece(3,3,d,69),
 
-
+              %add_piece(30,7,d,99),
+              %add_piece(29,6,d,98),
+              %add_piece(28,6,d,97),
+              add_piece(18,3,r,87),
+              add_piece(19,3,r,77),
+              add_piece(17,3,r,97),
+              add_piece(20, 3, d,67),
+              add_piece(27,5,d,96),
+              add_piece(26,5,d,95),
+              add_piece(25,5,d,94),
+              add_piece(24,4,d,93),
+              add_piece(23,4,d,92),
+              add_piece(22,4,d,91),
+              add_piece(16,3,d,90)
+              .

@@ -1,109 +1,84 @@
-:-ensure_loaded('io.pl').
-:-ensure_loaded('logic.pl').
+:-ensure_loaded('game_states.pl').
 
-play:-
-    % Removes previous game
-    retractall(piece_position(_,_,_)),
-
-    % Sets the board
-    asserta((piece_position(_,_,_):-fail)),
-
-    % Menu e ver o modo 
-    isaac_menu(Gamemode),
-
-    % Set o gamemode e Play
-    gamemode(Gamemode),
-
-    % Verifies if wants to play again
-    playagain(Gamemode).
+play:- isaac_menu.
 
 
-% Game cycle
-playagain(Gamemode):-
-    Gamemode \= 5,
-    play.
+isaac_menu :- repeat,
+             draw_isaac_menu,
+             ask_for_menu_option(Selection),
+             read(Selection),
+             (
+                 Selection = 10;
+                 gamemode(Selection),fail
+             ).
 
-playagain(5).
+ %player_robot(Player, easy)
+%player_robot(Player,hard)
 
-% 1 - Player vs Player
-gamemode(1):-
-    phase1cycle("B", FirstPlayerToFinish),
-    phase2cycle(FirstPlayerToFinish,0,0,0),
-    %check_winner(Won).
+gamemode(1) :- play_game.
 
-check_winner(0).%:-
+gamemode(2) :- play_game.
+gamemode(3) :- play_game.
+gamemode(4) :- play_game.
+gamemode(5) :- play_game.
+gamemode(6) :- play_game.
+gamemode(7) :- play_game.
+gamemode(8) :- play_game.
+gamemode(9) :- play_game.
 
-    %see length of pieces not placed
-    
-%.    
-
-
-check_winner("B").
-
-check_winner("W").
-
-% 2 - Player vs Computer
-gamemode(2).%:-
-    
-%.
-
-% 3 - Computer vs Human
-gamemode(3).%:-
-    
-%.
-
-% 4 - Computer vs Computer
-gamemode(4).%:-
-    
-%.
-
-% 5 - Exit the game
-gamemode(5).
-
-%while the 2 players can play
-phase1cycle(Player, First_Player_To_Finish):-
-
-    can_place_piece(Player),
-    ask_for_piece_to_add(Player),
-    change_player(Player, Next_Player),
-    phase1cycle(Next_Player, First_Player_To_Finish).
-
-
-%if first player finishes
-phase1cycle(Player, Player):-
-
-    change_player(Player, Next_Player),
-    can_place_piece(Next_Player),
-    repeat,
-    ask_for_piece_to_add(Player),    
-    \+ can_place_piece(Next_Player).
-
-
-phase2cycle(_Player, SCB, SCW, Won):-
-
-    (SCB >= 100,
-    write('Black won!'),
-    Won is "B");
-    (SCW >= 100,
-    write('White won!'),
-    Won is "W").
+play_game :-
+            retractall(piece_position(_,_,_)),
+            retractall(sc(_,_)),
+            retractall(bpr(_,_)),
+            % Sets the board
+            assertz((piece_position(_,_,_):-fail)),
+            asserta(sc("W",0)),
+            asserta(sc("B",0)),
+            asserta(bpr("W",0)),
+            asserta(bpr("B",0)),
+            %populate,
+            game_state(start, "W").
     
 
-phase2cycle(Player, SCB, SCW, _Won):-
+game_state(GameState, _):-
+       game_over(GameState, Winner),!,
+       congrats(Winner).
 
-    can_remove_piece(Player),
-    ask_for_piece_to_remove(Piece_id),
-    move2P(Player, Piece_id, SCB, SCW),
-    change_player(Player, NewPlayer),
-    phase2cycle(NewPlayer, SCB, SCW).
-    
-phase2cycle(Player, SCB, SCW, Won):-
+game_state(GameState, Player):-
+    display(GameState, Player),
+    ask_for_move(GameState,Player,Move),
+    move(GameState,Move, NewGameState),
+    change_player(NewGameState,Player, Next_Player),!,
+    game_state(NewGameState, Next_Player).
 
-    change_player(Player, NewPlayer),
-    (repeat,
-    ask_for_piece_to_remove(Piece_id),
-    move2P(Player, Piece_id, SCB, SCW),
-    \+ can_remove_piece(NewPlayer)),
-    check_winner(Won).
-    
+
+game_state(_,_):-write('Fail').
+
+game_over(GameState,"White"):-
+    (GameState= both_players_remove;
+     GameState = one_player_remove
+    ),
+    sc("W",100).
+
+game_over(GameState,"Black"):-
+    (GameState= both_players_remove;
+     GameState = one_player_remove
+    ),
+    sc("B",100).
+
+game_over(end_game,"White"):-
+    sc("B",SCB),
+    sc("W",SCW),
+    SCW > SCB.
+
+game_over(end_game,"Black"):-
+    sc("B",SCB),
+    sc("W",SCW),
+    SCW < SCB.
+
+congrats(Winner):-
+    nl,
+    print_string_(Winner),
+    write(' Player Won this Game'),nl,nl.
+
 
