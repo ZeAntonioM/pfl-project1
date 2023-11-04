@@ -61,10 +61,9 @@ add_piece(Piece,Size,Direction, Position):-
 
 can_remove_pieces(Player, BiggestPieceB, BiggestPieceW, SCB, SCW):-
     setof(Piece, Player^Direction^Position^(piece_position(Piece, Direction, Position),piece_owner(Piece, Player)), Pieces),
-    write_list_(Pieces),nl,
     can_remove_pieces(Player, Pieces, BiggestPieceB, BiggestPieceW, SCB, SCW).
 
-can_remove_pieces(_Player, [], _BiggestPieceB, _BiggestPieceW, _SCB, _SCW).
+can_remove_pieces(_Player, [], _BiggestPieceB, _BiggestPieceW, _SCB, _SCW):-fail.
 can_remove_pieces("B", [Piece|_T], BiggestPieceB, BiggestPieceW, SCB, SCW) :-
     findall(Position, piece_position(Piece, _, Position),  Positions),
     can_remove_piece("B", Piece, BiggestPieceB, BiggestPieceW, Positions, SCB, SCW).
@@ -74,7 +73,7 @@ can_remove_pieces("W", [Piece|_T], BiggestPieceB, BiggestPieceW, SCB, SCW) :-
     can_remove_piece("W", Piece, BiggestPieceB, BiggestPieceW, Positions, SCB, SCW).
 
 can_remove_pieces(Player, [_Piece|T], BiggestPieceB, BiggestPieceW, SCB, SCW) :-
-    can_remove_pieces(Player, T, BiggestPieceB, BiggestPieceW, SCB, SCW).
+    can_remove_pieces(Player, T, BiggestPieceB, BiggestPieceW, SCB, SCW),!.
 
 
 % removes the piece from the board
@@ -84,13 +83,9 @@ remove_piece(Piece) :-
 % Calculates the points of the move
 calculate_points( Piece, Position, Direction, SCB, SCW, Points) :-
     get_line_values(Direction, Position, Values),!,
-    write_list_(Values),nl,
     pieces_in_line(Values, Pieces),
-    write(Pieces),nl,
     sc_in_line(Values, SCB, SCW, SC),
-       write(SC),nl,
     piece_value(Piece, Value),
-        write(Value),nl,
     multiply_points(Pieces, Value, SC, Points).
 
 
@@ -109,7 +104,6 @@ get_line_values(v, Position, Values) :-
 % Checks the number of pieces in the line
 pieces_in_line(Values, Pieces) :-
     setof(Id, Direction^Position^(piece_position(Id,Direction,Position), member(Position, Values)),Res),
-    write_list_(Res),
     length(Res, Pieces).
 
 pieces_in_line(_Values, 0).
@@ -123,7 +117,8 @@ sc_in_line([Value|T], SCB, SCW, SC) :-
     SC is SC1 + 1.
 
 sc_in_line([Value|T], SCB, SCW, SC) :-
-    Value == 99 -SCW,
+    NEW_SCW is 99 - SCW,
+    Value == NEW_SCW,
     sc_in_line(T, SCB, SCW, SC1),
     SC is SC1 + 1.
 
@@ -145,6 +140,12 @@ score_points("W", SCB, SCW, PointsToScore, NewSCB, NewSCW) :-
     NewSCW is SCW + PointsToScore,
     NewSCB is SCB.
 
+update_biggest_piece("W", Piece, BPRB, BPRW,BPRB, Size):- piece_size(Piece,Size),between(BPRW,7, Size) .
+update_biggest_piece("B", Piece, BPRB, BPRW,Size, BPRW):-piece_size(Piece,Size),between(BPRB,7, Size).
+update_biggest_piece(_, _, BPRB, BPRW,BPRB, BPRW).
+update_biggest_piece(Piece, BPR, Size):-piece_size(Piece,Size), between(BPR,7, Size).
+update_biggest_piece(_, BPR, BPR).
+
 populate:-
               add_piece(15,7,u,0),
               add_piece(14,6,u,1),
@@ -156,11 +157,16 @@ populate:-
               add_piece(8,4,u,7),
               add_piece(7,4,u,8),
               add_piece(1,3,u,9),
+              add_piece(2,3,d,68),
+              add_piece(3,3,d,69),
 
               %add_piece(30,7,d,99),
               %add_piece(29,6,d,98),
               %add_piece(28,6,d,97),
+              add_piece(18,3,r,87),
+              add_piece(19,3,r,77),
               add_piece(17,3,r,97),
+              add_piece(20, 3, d,67),
               add_piece(27,5,d,96),
               add_piece(26,5,d,95),
               add_piece(25,5,d,94),
@@ -168,8 +174,4 @@ populate:-
               add_piece(23,4,d,92),
               add_piece(22,4,d,91),
               add_piece(16,3,d,90)
-              
-              
-              
-              
               .

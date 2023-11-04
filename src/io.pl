@@ -88,24 +88,20 @@ get_points_to_score(Points, PointsToScore) :-
 
 ask_for_piece_to_remove(Player, Piece, Direction, New_Position, BiggestPieceB, BiggestPieceW, SCB, SCW):-
         draw_board(Player),
+        draw_SC(Player, SCB, SCW),
         player_to_move(Player),
         repeat,
-        write('Coube'),
         ask_for_piece_to_remove_message( Position),
-        write('Coube'),
         convert_position(Player, Position, New_Position),
-        write('Coube'),
         (piece_position(Piece, _, New_Position)->
                 true;
                 write('Position is empty'),fail
          ),
-        write('Coube'),
         findall(Position_, piece_position(Piece, _, Position_),  Positions),
         (can_remove_piece(Player, Piece, BiggestPieceB, BiggestPieceW, Positions, SCB, SCW)->
                 piece_position(Piece, Direction, _);
                 write('You cannot remove this piece.'), nl, fail
-        ),
-        write('Coube').
+        ).
     
 
 

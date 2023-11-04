@@ -81,6 +81,21 @@ player_to_move(Player):-
         write(' turn to play'),
         nl,nl.
 
+draw_SC("B", SCB, SCW):-
+        convert_SC("W", SCW, NEW_SCW),
+        draw_SC(SCB, NEW_SCW).
+
+draw_SC("W", SCB, SCW):-
+        convert_SC("W", SCB, NEW_SCB),
+        draw_SC(NEW_SCB, SCW).    
+
+draw_SC(SCB, SCW):-
+         nl,
+         write('Black Player SC: '),
+         write(SCB),
+         write('                             '),
+         write('White Player SC: '),
+         write(SCW).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MENU %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 

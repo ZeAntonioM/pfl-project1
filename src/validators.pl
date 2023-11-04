@@ -63,11 +63,9 @@ can_remove_piece("W", Piece, _BiggestPieceB, BiggestPieceW, Positions, SCB, SCW)
 
 can_remove_piece(Player,Piece, Positions, BiggestPiece, SCB, SCW):-
     piece_owner(Piece,Player),
-    piece_size(Piece, SizeP),
+    piece_size(Piece, SizeP),!,
+    New_SCW is 99 - SCW,
     SizeP >= BiggestPiece,!,
-   write('Arroz1'),
     \+ member(SCB, Positions),!,
-    write('Arroz2'),
-    \+ member(SCW, Positions),!,
-    write('Arroz3').
+    \+ member(New_SCW, Positions),!.
 
