@@ -14,33 +14,32 @@ change_player("B", "W").
 %%%%%%%%%%%%%%%%%% 1st PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+% can_place_pieces(+Player, -Pieces) returns a list of pieces that the player can place
 can_place_pieces(Player, Pieces):-
         findall(Size-Direction-Position,can_place_piece(Player,Position,Size,Direction), Pieces ).
 
+% can_place_piece(+Player, +Position, +Size, +Direction) checks if the player can place a piece in the given position, size and direction
+% calls an auxiliary predicate with the minimum size of the piece
 can_place_piece(Player,Position,Size,Direction):-
         can_place_piece(Player, Position, Size,Direction, 3).
 
+% can_place_piece(+Player, +Position, +Size, +Direction, +Acc) auxiliary predicate that checks if the player can place a piece in the given position, size and direction
+% If Acc is equal to the size of the piece, just checks if the position is valid and if the piece exists
 can_place_piece(Player,Position,Acc,Direction, Acc):-
         valid_position(Acc,Position,Direction),
         valid_piece(Player, Acc,_Piece).
 
+% If Acc is not equal to the size of the piece, validates if Acc is a valid size and calls the predicate with Acc+1
 can_place_piece(Player,Position,Size,Direction, Acc):-
         validate_size(Acc),
         Acc2 is Acc +1,
         can_place_piece(Player,Position,Size,Direction, Acc2).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-populate(Pos1, Pos2):-
-        assertz((piece_position(_,_,_):-fail)),
-        Pos1<Pos2,
-        asserta(piece_position(1,h,Pos1)),
-        Pos3 is Pos1 +1,
-        populate(Pos3,Pos2).
 
-populate(Pos1,Pos1).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% add_piece(+Piece, +Size, +Direction, +Position) adds a piece to the board
+% if size is 0, just returns
 add_piece(_,0,_,_).
 
+% if direction is left or right, adds all the piece's positions to the board horizontally
 add_piece(Piece,Size,Direction, Position):-
     (Direction = l;
         Direction = r),
@@ -49,6 +48,7 @@ add_piece(Piece,Size,Direction, Position):-
     Size2 is Size -1,
     add_piece(Piece,Size2,Direction, Next_position).
 
+% if direction is up or down, adds all the piece's positions to the board vertically
 add_piece(Piece,Size,Direction, Position):-
     (Direction = u;
         Direction = d),
@@ -62,6 +62,8 @@ add_piece(Piece,Size,Direction, Position):-
 %%%%%%%%%%%%%%%%%% 2nd PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% can_move_pieces(+Player, -Pieces) returns a list of pieces that the player can move
+% gets all the pieces in board, checks if the player is the owner of the piece and if the piece can be removed
 can_remove_pieces(Player, Pieces):-
     setof(
              Piece,
@@ -74,13 +76,15 @@ can_remove_pieces(Player, Pieces):-
          )
     .
 
+% if there is no piece to remove, returns an empty list
 can_remove_pieces(_, []).
 
-% removes the piece from the board
+% remove_piece(+Piece) removes all the piece's positions from the board
 remove_piece(Piece) :-
     retractall(piece_position(Piece, _, _)).
 
-% Calculates the points of the move
+% calculate_points( +Piece, +Position, +Direction, -Points) calculates the points of a move
+% gets the number of pieces in line with the removed piece, checks the number of score counters in the line and calculates the points
 calculate_points( Piece, Position, Direction, Points) :-
      sc("W", SCW),
      sc("B", SCB),
@@ -91,60 +95,72 @@ calculate_points( Piece, Position, Direction, Points) :-
     multiply_points(Pieces, Value, SC, Points).
 
 
-% Gets the values of the line
+% get_line_values(+Direction, +Position, -Values) gets all the positions in the line of the given position
+% if direction is horizontal, gets all the positions between the first and last position of the line
 get_line_values(h, Position, Values) :-
     Line is Position div 10,
     Start is (10*Line + 0),
     End is (10*Line +9),
-    findall(V, between(Start,End , V), Values)
-    .
+    findall(V, between(Start,End , V), Values).
 
+% if direction is verticall, generates all the positions in the column of the given position
 get_line_values(v, Position, Values) :-
     Column is Position mod 10,
     generate_columns(Column, Values).
 
-% Checks the number of pieces in the line
+% pieces_in_line(+Values, -Pieces) gets the number of pieces in the line
+% gets all the pieces in the line and counts them
 pieces_in_line(Values, Pieces) :-
     setof(Id, Direction^Position^(piece_position(Id,Direction,Position), member(Position, Values)),Res),
     length(Res, Pieces).
 
+% if there is no piece in the line, returns 0
 pieces_in_line(_Values, 0).
     
-    
-% Checks the number of score counters in the line
+% sc_in_line(+Values, +SCB, +SCW, -SC) gets the number of score counters in the line
+% if there are no more values in the list, returns 0
 sc_in_line([], _, _, 0).
+
+% if the value is equal to the score counter of the black player, increments the counter and calls the predicate with the rest of the list
 sc_in_line([Value|T], SCB, SCW, SC) :-
     Value == SCB,
     sc_in_line(T, SCB, SCW, SC1),
     SC is SC1 + 1.
 
+% if the value is equal to the score counter of the white player, converts the score counter's values, increments the counter and calls the predicate with the rest of the list
 sc_in_line([Value|T], SCB, SCW, SC) :-
     NEW_SCW is 99 - SCW,
     Value == NEW_SCW,
     sc_in_line(T, SCB, SCW, SC1),
     SC is SC1 + 1.
 
+% if the value is not equal to the score counter of the black or white player, calls the predicate with the rest of the list
 sc_in_line([_Value|T], SCB, SCW, SC) :-
     sc_in_line(T, SCB, SCW, SC).
 
+% multiply_points(+Pieces, +Value, +SC, -Points) calculates the points of a move
+% if there are no score counters in the line, just multiplies the number of pieces by the value of the piece
 multiply_points(Pieces, Value, 0, Points):-
     Points is Pieces * Value.
 
+% if there are score counters in the line, multiplies the number of pieces by the value of the piece and multiplies the result by 2
 multiply_points(Pieces, Value, SC, Points) :-
     Points is Pieces * Value * 2 * SC.
     
-
+% score_points(+Player, +SC, +PointsToScore) updates the score of the player
 score_points(Player , SC, PointsToScore) :-
      Points is SC + PointsToScore,
     retractall(sc(Player,_)),
     asserta(sc(Player,Points)).
 
+% update_biggest_piece(+Player, +Piece, +BPR) updates the biggest piece removed by the player
 update_biggest_piece(Player, Piece, BPR):-
         piece_size(Piece,Size),
         between(BPR,7, Size),
         retractall(bpr(Player,_)),
         asserta(bpr(Player,Size)).
 
+% populate polulates the board with the initial pieces
 populate:-
               add_piece(15,7,u,0),
               add_piece(14,6,u,1),
