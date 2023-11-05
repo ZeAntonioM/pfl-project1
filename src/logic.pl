@@ -147,8 +147,7 @@ sc_in_line([_Value|T], SCB, SCW, SC) :-
 
 points_ia(Points, PointsToScore):-
     findall(X, between(0,Points, X), Values),
-    random_member(PointsToScore, Values),
-    write(PointsToScore).
+    random_member(PointsToScore, Values).
 
 multiply_points(Pieces, Value, 0, Points):-
     Points is Pieces * Value.

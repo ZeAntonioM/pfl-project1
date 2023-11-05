@@ -53,14 +53,11 @@ ask_for_piece_position(Position):-
     
 ask_for_menu_option(Choice):-
     write('Choose an option(1-10): '),
-    write('A '),
     read(Choice), nl,
-    write('B '), write(Choice), nl,
     validate_menu_choice(Choice).
     
 ask_for_menu_option(Choice):-
         write('Invalid choice! '),
-        write(Choice), nl,
         ask_for_menu_option(Choice).
 
 % Gets the points to score

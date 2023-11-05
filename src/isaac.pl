@@ -4,17 +4,14 @@ play:- isaac_menu.
 
 
 isaac_menu :-
-            repeat,
             retractall(player_robot(_,_)),
             assertz((player_robot(_,_):-fail)),
             draw_isaac_menu,
             ask_for_menu_option(Selection),
-            write(Selection), nl, write('tryagain'),nl,
-            (
-                Selection = 10;
-                write('sus'),nl,
-                gamemode(Selection),!,fail
-            ).
+            gamemode(Selection),
+            Selection == 10.
+
+isaac_menu:-isaac_menu.
 
 gamemode(1) :- play_game.
 
@@ -61,6 +58,8 @@ gamemode(9) :-
     asserta(player_robot("B", hard)),
     asserta(player_robot("W", hard)),
     play_game.
+
+gamemode(10).
 
 play_game :-
             retractall(piece_position(_,_,_)),
