@@ -1,9 +1,14 @@
 :- use_module(library(clpfd)).
 :- use_module(library(between)).
+:- use_module(library(random)).
+:- use_module(library(system), [now/1]).
 :- ensure_loaded('pieces.pl').
 :- ensure_loaded('io.pl').
 :- ensure_loaded('utils.pl').
 
+init_random_state:-
+    now(Seed),
+    setrand(Seed).
 
 % Changes the player
 change_player("W", "B").
@@ -58,6 +63,12 @@ add_piece(Piece,Size,Direction, Position):-
     Size2 is Size -1,
     add_piece(Piece,Size2,Direction, Next_position).
 
+piece_to_add_easy_ia(Player, Piece, Direction, Position):-
+        can_place_pieces(Player, Moves),
+        random_member((Size-Direction1-Position1), Moves),
+        convert_position(Player, Position1, Position),
+        convert_direction(Player, Direction1, Direction),
+        valid_piece(Player, Size, Piece).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%% 2nd PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
@@ -76,6 +87,11 @@ can_remove_pieces(Player, Pieces):-
     .
 
 can_remove_pieces(_, []).
+
+piece_to_remove_easy_ia(Player, Piece, Direction, Position):-
+        can_remove_pieces(Player, Pieces),
+        random_member(Piece, Pieces),
+        piece_position(Piece, Direction, Position).
 
 % removes the piece from the board
 remove_piece(Piece) :-
@@ -127,6 +143,10 @@ sc_in_line([Value|T], SCB, SCW, SC) :-
 
 sc_in_line([_Value|T], SCB, SCW, SC) :-
     sc_in_line(T, SCB, SCW, SC).
+
+points_ia(Points, PointsToScore):-
+    findall(X, between(0,Points, X), Values),
+    random_member(PointsToScore, Values).
 
 multiply_points(Pieces, Value, 0, Points):-
     Points is Pieces * Value.
