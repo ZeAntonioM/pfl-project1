@@ -9,9 +9,11 @@ isaac_menu :-
             assertz((player_robot(_,_):-fail)),
             draw_isaac_menu,
             ask_for_menu_option(Selection),
+            write(Selection), nl, write('tryagain'),nl,
             (
                 Selection = 10;
-                gamemode(Selection),fail
+                write('sus'),nl,
+                gamemode(Selection),!,fail
             ).
 
 gamemode(1) :- play_game.

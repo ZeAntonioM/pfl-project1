@@ -5,7 +5,7 @@
 
 display(start,_).
 
-display(_,Player):-player_robot(Player,_).
+%display(_,Player):-player_robot(Player,_).
 
 display(_,Player):-
         draw_board(Player),
@@ -61,7 +61,7 @@ move(GameState, Piece-Direction-Position, NewGameState):-
         bpr(Player,BPR),
         update_biggest_piece(Player,Piece,BPR),
         calculate_points( Piece, Position, Direction, Points),!,
-        (player_robot(Player, _), points_ia; get_points_to_score(Points, PointsToScore),!),
+        (player_robot(Player, _), points_ia(Points, PointsToScore),!; get_points_to_score(Points, PointsToScore),!),
         score_points(Player, SC, PointsToScore),!,
         value(GameState, Player, NewGameState).
          

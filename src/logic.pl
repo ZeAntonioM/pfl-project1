@@ -65,9 +65,10 @@ add_piece(Piece,Size,Direction, Position):-
 
 piece_to_add_easy_ia(Player, Piece, Direction, Position):-
         can_place_pieces(Player, Moves),
-        random_member((Size-Direction1-Position1), Moves),
-        convert_position(Player, Position1, Position),
-        convert_direction(Player, Direction1, Direction),
+        random_member((Size-Direction-Position), Moves),
+        %random_member((Size-Direction1-Position1), Moves),
+        %convert_position(Player, Position1, Position),
+        %convert_direction(Player, Direction1, Direction),
         valid_piece(Player, Size, Piece).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,7 +147,8 @@ sc_in_line([_Value|T], SCB, SCW, SC) :-
 
 points_ia(Points, PointsToScore):-
     findall(X, between(0,Points, X), Values),
-    random_member(PointsToScore, Values).
+    random_member(PointsToScore, Values),
+    write(PointsToScore).
 
 multiply_points(Pieces, Value, 0, Points):-
     Points is Pieces * Value.
