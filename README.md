@@ -41,12 +41,13 @@ This game has a specific method to score. Both players start with 0 points, and 
 
 After scoring, the player may move his score counter a number of cells between 0 and the final score. The score counter cannot be placed on a cell that already contains a score counter.
 
-When a player scores more than 100 points, he wins the game. If both players pass, the player with the highest score wins.
+When a player scores more than 100 points, he wins the game. If both players pass, the player with the highest score wins. If both players have the same score, the player with the longest line wins. If both players have the same score and the same line length, wins the player who started the game.
 
 ## Run the game
 
 - Open Sicstus Prolog
 - run `consult('isaac.pl').`
+- run `play.`
 
 ## Authors
 

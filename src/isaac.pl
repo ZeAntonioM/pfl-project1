@@ -75,10 +75,13 @@ game_over(end_game,"Black"):-
     sc("B",SCB),
     sc("W",SCW),
     SCW < SCB.
+    
+game_over(end_game, Player):-
+    length_remaining_pieces("B", LenghtB),
+    length_remaining_pieces("W", LenghtW),
+    biggest_lenght(LenghtB, LenghtW, Player).
 
-congrats(Winner):-
-    nl,
-    print_string_(Winner),
-    write(' Player Won this Game'),nl,nl.
+game_over(end_game,"Black").
+
 
 

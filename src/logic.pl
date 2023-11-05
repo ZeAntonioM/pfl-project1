@@ -175,3 +175,25 @@ populate:-
               add_piece(22,4,d,91),
               add_piece(16,3,d,90)
               .
+
+length_remaining_pieces(Player, Length):-
+        
+        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 3)), N3),
+        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 4)), N4),
+        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 5)), N5),
+        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 6)), N6),
+        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 7)), N7),
+        
+        length(N3, L3),
+        length(N4, L4),
+        length(N5, L5),
+        length(N6, L6),
+        length(N7, L7),
+
+        R3 is 5 - L3,
+        R4 is 4 - L4,
+        R5 is 3 - L5,
+        R6 is 2 - L6,
+        R7 is 1 - L7,
+
+        Length is R3 + R4 + R5 + R6 + R7.
