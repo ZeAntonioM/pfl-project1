@@ -140,8 +140,8 @@ game_over(end_game,"Black"):-
 % If the second phase ended, if the Black Player and the White Player have the same amount of points, then the winner is the 
 % player with the biggest line of pieces remaining
 game_over(end_game, Player):-
-    length_remaining_pieces("B", LenghtB),
-    length_remaining_pieces("W", LenghtW),
+    remaining_pieces("B", LenghtB),
+    remaining_pieces("W", LenghtW),
     biggest_lenght(LenghtB, LenghtW, Player).
 
 % else, the winner is the player who started the game.

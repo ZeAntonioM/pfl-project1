@@ -105,6 +105,17 @@ value(start, Player, both_players_add_pieces):-
         length(ListOfMoves,Size),
         Size>0.
 
+value(one_player_add_pieces, _, both_players_remove_pieces):- 
+        length_remaining_pieces("B", SizeB),
+        length_remaining_pieces("W", SizeW),
+        change_player(Player, Next_player),
+        asserta(remaining_pieces("B", SizeB)),
+        asserta(remaining_pieces("W", SizeW)),
+        valid_moves(both_players_remove_pieces, Next_player, ListOfMoves),
+        length(ListOfMoves,Size),
+        Size>0, !.
+
+
 % if both players can add or remove pieces, it gets the next player can do a valid move and updates the game state.
 value(GameState, Player, GameState):-
         (GameState = both_players_add_pieces;
