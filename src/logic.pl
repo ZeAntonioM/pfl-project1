@@ -23,29 +23,32 @@ change_player("B", "W").
 %%%%%%%%%%%%%% Can Place Piece %%%%%%%%%%%%%%
 % can_place_pieces(+Player, -Pieces) returns a list of pieces that the player can place
 can_place_pieces(Player, Pieces):-
-        findall(Size-Direction-Position,can_place_piece(Player,Position,Size,Direction), Pieces ).
+        findall(Piece-Size-Direction-Position,can_place_piece(Player,Piece,Position,Size,Direction), Pieces ).
 
-% can_place_piece(+Player, +Position, +Size, +Direction) checks if the player can place a piece in the given position, size and direction
+
+% can_place_piece(+Player, +Piece,+Position, +Size, +Direction) checks if the player can place a piece in the given position, size and direction
 % calls an auxiliary predicate with the minimum size of the piece
-can_place_piece(Player,Position,Size,Direction):-
-        can_place_piece(Player, Position, Size,Direction, 3).
+can_place_piece(Player,Piece,Position,Size,Direction):-
+        can_place_piece(Player,Piece, Position, Size,Direction, 3).
 
-% can_place_piece(+Player, +Position, +Size, +Direction, +Acc) auxiliary predicate that checks if the player can place a piece in the given position, size and direction
+% can_place_piece(+Player,+Piece, +Position, +Size, +Direction, +Acc) auxiliary predicate that checks if the player can place a piece in the given position, size and direction
 % If Acc is equal to the size of the piece, just checks if the position is valid and if the piece exists
-can_place_piece(Player,Position,Acc,Direction, Acc):-
+can_place_piece(Player,Piece,Position,Acc,Direction, Acc):-
         valid_position(Acc,Position,Direction),
-        valid_piece(Player, Acc,_Piece).
+        valid_piece(Player, Acc,Piece).
+
 
 % If Acc is not equal to the size of the piece, validates if Acc is a valid size and calls the predicate with Acc+1
-can_place_piece(Player,Position,Size,Direction, Acc):-
+can_place_piece(Player,Piece,Position,Size,Direction, Acc):-
         validate_size(Acc),
         Acc2 is Acc +1,
-        can_place_piece(Player,Position,Size,Direction, Acc2).
+        can_place_piece(Player,Piece,Position,Size,Direction, Acc2).
 
 
 %%%%%%%%%%%%%% Add Piece %%%%%%%%%%%%%%
 % add_piece(+Piece, +Size, +Direction, +Position) adds a piece to the board
 % if size is 0, just returns
+
 add_piece(_,0,_,_).
 
 % if direction is left or right, adds all the piece's positions to the board horizontally
@@ -110,7 +113,8 @@ piece_to_remove_easy_ia(Player, Piece, Direction, Position):-
 %%%%%%%%%%%%%% Remove Piece %%%%%%%%%%%%%%
 % remove_piece(+Piece) removes all the piece's positions from the board
 remove_piece(Piece) :-
-    retractall(piece_position(Piece, _, _)).
+    retractall(piece_position(Piece, _, _)),!.
+
 
 
 %%%%%%%%%%%%%% Calculate Points %%%%%%%%%%%%%%
@@ -198,7 +202,7 @@ multiply_points(Pieces, Value, SC, Points) :-
 score_points(Player , SC, PointsToScore) :-
      Points is SC + PointsToScore,
     retractall(sc(Player,_)),
-    asserta(sc(Player,Points)).
+    asserta(sc(Player,Points)),!.
 
 %%%%%%%%%%%%%% Update Biggest Piece Removed %%%%%%%%%%%%%%
 % update_biggest_piece(+Player, +Piece, +BPR) updates the biggest piece removed by the player
@@ -207,6 +211,49 @@ update_biggest_piece(Player, Piece, BPR):-
         between(BPR,7, Size),
         retractall(bpr(Player,_)),
         asserta(bpr(Player,Size)).
+
+
+populate:-
+
+          retractall(piece_position(_,_,_)),
+            retractall(sc(_,_)),
+            retractall(bpr(_,_)),
+            % Sets the board
+            assertz((piece_position(_,_,_):-fail)),
+            assertz((player_robot(_, _):-fail)),   
+            asserta(sc("W",0)),
+            asserta(sc("B",0)),
+            asserta(bpr("W",0)),
+            asserta(bpr("B",0)),
+            retractall((player_robot(_, _))),
+              add_piece(15,7,u,0),
+              add_piece(14,6,u,1),
+              add_piece(29,6,u,2),
+              add_piece(12,5,u,3),
+              add_piece(11,5,u,4),
+              add_piece(10,5,u,5),
+              add_piece(9,4,u,6),
+              add_piece(8,4,u,7),
+              add_piece(7,4,u,8),
+              add_piece(1,3,u,9),
+              add_piece(2,3,d,68),
+              add_piece(3,3,d,69),
+
+              %add_piece(30,7,d,99),
+              %add_piece(29,6,d,98),
+              %add_piece(28,6,d,97),
+              add_piece(18,3,r,87),
+              add_piece(19,3,r,77),
+              add_piece(17,3,r,97),
+              add_piece(20, 3, d,67),
+              add_piece(27,5,d,96),
+              add_piece(26,5,d,95),
+              add_piece(25,5,d,94),
+              add_piece(24,4,d,93),
+              add_piece(23,4,d,92),
+              add_piece(22,4,d,91),
+              add_piece(16,3,d,90)
+              .
 
 
 %%%%%%%%%%%%%% Lenght of Remaining Pieces %%%%%%%%%%%%%%
@@ -247,3 +294,4 @@ biggest_lenght(LengthB, LengthW, Player) :-
     Player is "W".
 
     
+

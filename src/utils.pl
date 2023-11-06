@@ -61,3 +61,12 @@ generate_columns(N, [N2 | List], Acc):-
 % convert_SC(+Player, +SC, -New_SC) gives the score after the conversion
 convert_SC("B",SC,SC).
 convert_SC("W",SC, New_SC):-New_SC is 99- SC.
+
+biggest_value(V1,V2,V1):- V1>=V2,!.
+biggest_value(_V1,V2,V2):-!.
+
+reverse_list([], []).
+reverse_list([H|T], Reversed) :-
+    reverse_list(T, ReversedTail),
+    append(ReversedTail, [H], Reversed).
+

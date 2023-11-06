@@ -8,6 +8,10 @@ play:- isaac_menu.
 % draws the menu, reads the input and calls the gamemode. If the input is 10, the game ends. 
 isaac_menu :-
             retractall(player_robot(_,_)),
+            retractall(piece_position(_,_,_)),
+            retractall(bpr(_,_)),
+            retractall(sc(_,_)),
+            retractall(remaining_pieces(_,_)),
             assertz((player_robot(_,_):-fail)),
             draw_isaac_menu,
             ask_for_menu_option(Selection),
@@ -77,16 +81,11 @@ gamemode(9) :-
 %%%%%%%%%%%%%% Play Game %%%%%%%%%%%%%%
 % play_game prepares the game and starts it
 play_game :-
-            retractall(piece_position(_,_,_)),
-            retractall(sc(_,_)),
-            retractall(bpr(_,_)),
-            % Sets the board
             assertz((piece_position(_,_,_):-fail)),
-            asserta(sc("W",0)),
-            asserta(sc("B",0)),
-            asserta(bpr("W",0)),
-            asserta(bpr("B",0)),
-            %populate,
+            assertz(bpr("W",0)),
+            assertz(sc("W",0)),
+            assertz(bpr("B",0)),
+            assertz(sc("B",0)),
             game_state(start, "W").
     
 
@@ -116,14 +115,16 @@ game_over(GameState,"White"):-
     (GameState= both_players_remove;
      GameState = one_player_remove
     ),
-    sc("W",100).
+    sc("W",SC),
+    SC>=100.
 
 % If the game is on the 2nd phase and the Score Counter of the Black Player is 100, then the winner is the Black Player
 game_over(GameState,"Black"):-
     (GameState= both_players_remove;
      GameState = one_player_remove
     ),
-    sc("B",100).
+    sc("B",SC),
+    SC>=100.
 
 % If the second phase ended, if the White Player has more points than the Black Player, then the winner is the White Player
 game_over(end_game,"White"):-
@@ -146,5 +147,11 @@ game_over(end_game, Player):-
 
 % else, the winner is the player who started the game.
 game_over(end_game,"Black").
+
+
+congrats(Winner):-
+            write('Player '), write(Winner), write(' Won the Game!'),nl,nl,
+            isaac_menu.
+
 
 
