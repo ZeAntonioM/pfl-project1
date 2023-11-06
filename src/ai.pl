@@ -85,8 +85,8 @@ simulate_n_remove(Player,Move,Points,Value,N):-
 
 simulate_n_remove(_, _, 0). % If an error occurs the value is 0
 
-%choose_piece(+Player, +robot_type,-Move)
+%piece_to_add_hard_ai(+Player, +robot_type,-Move)
 %Gets a Piece to add
-choose_piece(Player,hard,Piece-Direction-Position):-
+piece_to_add_hard_ai(Player,Piece-Direction-Position):-
         valid_moves(both_players_add_pieces,Player,[Piece-Direction-Position | _]).
 

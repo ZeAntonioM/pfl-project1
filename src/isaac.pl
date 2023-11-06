@@ -8,6 +8,10 @@ play:- isaac_menu.
 % draws the menu, reads the input and calls the gamemode. If the input is 10, the game ends. 
 isaac_menu :-
             retractall(player_robot(_,_)),
+            retractall(piece_position(_,_,_)),
+            retractall(bpr(_,_)),
+            retractall(sc(_,_)),
+            retractall(remaining_pieces(_,_)),
             assertz((player_robot(_,_):-fail)),
             draw_isaac_menu,
             ask_for_menu_option(Selection),
@@ -76,7 +80,13 @@ gamemode(9) :-
 
 %%%%%%%%%%%%%% Play Game %%%%%%%%%%%%%%
 % play_game prepares the game and starts it
-play_game :- game_state(start, "W").
+play_game :-
+            assertz((piece_position(_,_,_):-fail)),
+            assertz(bpr("W",0)),
+            assertz(sc("W",0)),
+            assertz(bpr("B",0)),
+            assertz(sc("B",0)),
+            game_state(start, "W").
     
 
 %%%%%%%%%%%%%% Game State %%%%%%%%%%%%%%
@@ -137,5 +147,11 @@ game_over(end_game, Player):-
 
 % else, the winner is the player who started the game.
 game_over(end_game,"Black").
+
+
+congrats(Winner):-
+            write('Player '), write(Winner), write(' Won the Game!'),nl,nl,
+            isaac_menu.
+
 
 
