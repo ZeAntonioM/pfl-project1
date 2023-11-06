@@ -2,16 +2,15 @@
 
 play:- isaac_menu.
 
-
 isaac_menu :-
             retractall(player_robot(_,_)),
             assertz((player_robot(_,_):-fail)),
             draw_isaac_menu,
             ask_for_menu_option(Selection),
-            gamemode(Selection),
-            Selection == 10.
-
-isaac_menu:-isaac_menu.
+            (
+                Selection = 10;
+                gamemode(Selection)
+            ).
 
 gamemode(1) :- play_game.
 
@@ -114,6 +113,7 @@ game_over(end_game,"Black"):-
 congrats(Winner):-
     nl,
     print_string_(Winner),
-    write(' Player Won this Game'),nl,nl.
+    write(' Player Won this Game'),nl,nl,
+    isaac_menu.
 
 
