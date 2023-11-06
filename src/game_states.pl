@@ -36,7 +36,7 @@ ask_for_move(GameState,Player,Piece-Points):-
         GameState = one_player_remove_pieces),
         write(Player),
         player_robot(Player,_),
-        make_best_move(GameState,Player,Piece-Points, 1,_).
+        make_best_move(GameState,Player,Piece-Points, 3,_).
 
 ask_for_move(GameState,Player,Piece-Direction-Position):-
         (GameState = both_players_remove_pieces ;
@@ -152,19 +152,27 @@ value(both_players_remove_pieces, Player, 100):-
         sc(Player,SC),
         SC >= 100,!.
 
-value(both_players_remove_pieces, Player, 0):-
+value(both_players_remove_pieces, Player, Val):-
         change_player(Player,Next_Player),
         sc(Next_Player,SC2),
-        ((SC2 >= 100);
-        (valid_moves(both_players_remove_pieces, Player, ListOfMoves),
-        length(ListOfMoves,Size),
-        Size == 0)),!.
+        (SC2 >= 100),
+        Val is 0
+        .
 
-value(both_players_remove_pieces, Player, Diff):-
-        sc(Player,SC),
-        change_player(Player,Next_Player),
-        sc(Next_Player,SC2),
-        Diff is (SC - SC2),!.
+value(both_players_remove_pieces, Player, Val):-
+        valid_moves(both_players_remove_pieces, Player, ListOfMoves),
+        length(ListOfMoves,Size),!,
+        (Size == 0->
+         (Val is 0);
+         (
+                sc(Player,SC),
+                change_player(Player,Next_Player),
+                sc(Next_Player,SC2),
+                Val is (SC - SC2)
+             )
+
+         ).
+
 
 value(one_player_remove_pieces, Player, 100):-
         sc(Player,SC),
