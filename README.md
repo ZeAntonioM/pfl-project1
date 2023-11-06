@@ -77,8 +77,6 @@ For the pieces, including the `piece_position` predicate, we also have `piece(ID
 
 The game state is displayed in the console. The board is represented by a 10x10 matrix, where each cell represented a cell from 0 to 99. The pieces are represented in the board by arrows (representing their direction), the owner of the piece and the size of the piece, and the score counters are represented with a text "Black Player SC: "(or Write, depending on the player) and it's position. 
 
-![Image with the board and it's representation](/images/Board.png)
-
 The `display(+GameState, +Player)` predicate is called in the play predicate, and it calls the predicates that draws the board writes the Score Counters and writes whose turn it is.
 
 ```prolog
@@ -107,7 +105,16 @@ This predicates are usually called in the `move` predicate.
 
 The menu has 10 options: 
 
-![](/images/Menu.png)
+- 1 - Player vs Player
+- 2 - Player vs Easy AI
+- 3 - Easy AI vs Player
+- 4 - Player vs Hard AI
+- 5 - Hard AI vs Player
+- 6 - Easy AI vs Hard AI
+- 7 - Hard AI vs Easy AI
+- 8 - Easy AI vs Easy AI
+- 9 - Hard AI vs Hard AI
+- 10 - Exit
 
 ### Move Validation and Execution
 
