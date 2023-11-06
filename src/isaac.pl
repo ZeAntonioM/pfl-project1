@@ -149,9 +149,4 @@ game_over(end_game, Player):-
 game_over(end_game,"Black").
 
 
-congrats(Winner):-
-            write('Player '), write(Winner), write(' Won the Game!'),nl,nl,
-            isaac_menu.
-
-
 

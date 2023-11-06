@@ -179,10 +179,10 @@ sc_in_line([_Value|T], SCB, SCW, SC) :-
     sc_in_line(T, SCB, SCW, SC).
 
 
-%%%%%%%%%%%%%% Points IA %%%%%%%%%%%%%%
-% points_ia(+Points, -PointsToScore) returns the number of points to score
+%%%%%%%%%%%%%% Points Easy IA %%%%%%%%%%%%%%
+% points_easy_ia(+Points, -PointsToScore) returns the number of points to score
 % gets all the possible values of points and chooses a random one
-points_ia(Points, PointsToScore):-
+points_easy_ia(Points, PointsToScore):-
     findall(X, between(0,Points, X), Values),
     random_member(PointsToScore, Values).
 

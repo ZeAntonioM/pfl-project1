@@ -95,7 +95,7 @@ move(GameState, Piece-Direction-Position, NewGameState):-
         bpr(Player,BPR),
         update_biggest_piece(Player,Piece,BPR),
         calculate_points( Piece, Position, Direction, Points),!,
-        (player_robot(Player, _), points_ia(Points, PointsToScore),!; get_points_to_score(Points, PointsToScore),!),
+        (player_robot(Player, _), points_easy_ia(Points, PointsToScore),!; get_points_to_score(Points, PointsToScore),!),
         score_points(Player, SC, PointsToScore),!,
         state_machine(GameState, Player, NewGameState).
 
