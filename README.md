@@ -86,7 +86,7 @@ The `display(+GameState, +Player)` predicate is called in the play predicate, an
     display(_,Player):-
         draw_board(Player),
         sc("W", SCW),
-        sc("B", SCB),
+        sc("B", SCB),a
         draw_SC(Player, SCB,SCW),
         player_to_move(Player).
 

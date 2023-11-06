@@ -34,7 +34,6 @@ ask_for_move(GameState, Player, Piece-Direction-Position):-
         player_robot(Player, easy),
         (GameState = both_players_remove_pieces ;
         GameState = one_player_remove_pieces),
-        write('Robot Move: '), nl,
         piece_to_remove_easy_ia(Player, Piece, Direction, Position).
 
 % if the game is in the first move state and the player is a hard robot, it takes the best piece of  valid move  to add
@@ -42,7 +41,6 @@ ask_for_move(GameState,Player,Piece-Direction-Position):-
         (GameState = both_players_add_pieces ;
         GameState = one_player_add_pieces),
         player_robot(Player,hard),
-        write('Robot Move: '), nl,
         piece_to_add_hard_ai(Player,Piece-_-Direction-Position),!.
 
 % if the game is in the second move state and the player is a hard robot, it takes a the best piece of  valid move  to removes
