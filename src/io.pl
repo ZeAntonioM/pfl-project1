@@ -97,3 +97,8 @@ ask_for_piece_to_remove_message( Position):-
 ask_for_piece_to_remove_message( Position):-
         nl, write('Invalid Piece'),nl,
         ask_for_piece_to_remove_message(Position).
+
+congrats(Winner):-
+    nl,
+    print_string_(Winner),
+    write(' Player Won this Game'),nl,nl.
