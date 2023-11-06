@@ -258,26 +258,14 @@ populate:-
 %%%%%%%%%%%%%% Lenght of Remaining Pieces %%%%%%%%%%%%%%
 % length_remaining_pieces(+Player, -Length) returns the lenght of the line formed by the remaining pieces of the player
 length_remaining_pieces(Player, Length):-
-        
-        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 3)), N3),
-        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 4)), N4),
-        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 5)), N5),
-        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 6)), N6),
-        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 7)), N7),
-        
-        length(N3, L3),
-        length(N4, L4),
-        length(N5, L5),
-        length(N6, L6),
-        length(N7, L7),
 
-        R3 is 15 - L3,
-        R4 is 16 - L4,
-        R5 is 15 - L5,
-        R6 is 12 - L6,
-        R7 is 7 - L7,
+        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player)), N),
 
-        Length is R3 + R4 + R5 + R6 + R7.
+        length(N, L),
+
+        MaxPositions is 15+16+15+12+7,
+
+        Length is MaxPositions-L.
 
 
 %%%%%%%%%%%%%% Biggest Lenght %%%%%%%%%%%%%%
