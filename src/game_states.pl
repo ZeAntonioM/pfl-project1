@@ -73,6 +73,10 @@ ask_for_move(GameState,Player,Piece-Direction-Position):-
 % if the game is in the start state, it updates the game state.
 move(start, Player,NewGameState):-state_machine(start,Player, NewGameState ).
 
+
+% if the game is in the second phase start state, it updates the game state.
+move(second_phase_start, Player,NewGameState):-state_machine(second_phase_start,Player, NewGameState ).
+
 % if the game is in the first move state, it adds the piece to the board and updates the game state.
 move(GameState, Piece-Direction-Position, NewGameState):-
          (GameState = both_players_add_pieces ;
@@ -131,7 +135,7 @@ change_player(_,Player, Player).
 
 
 %%%%%%%% Value %%%%%%%%%%%
-% value(+GameState, +Player, -NewGameState) updates the game state
+% state_machine(+GameState, +Player, -NewGameState) updates the game state
 % if the game is in the start state, it gets the next player and checks if the next player can add pieces. Finally, it returns the game state to the first phase.
 state_machine(start, Player, both_players_add_pieces):-
          change_player(Player, Next_player),
