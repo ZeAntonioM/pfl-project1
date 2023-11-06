@@ -240,7 +240,7 @@ value(one_player_remove_pieces, Player, 100):-
         sc(Next_Player,SC2),
         SC >SC2,!.
 
-%If only onle player is removing pieces and can still remove more pieces then Val is thei difference of points
+%If only onle player is removing pieces and can still remove more pieces then Val is their difference of points
 value(one_player_remove_pieces, Player, Diff):-
         valid_moves(one_player_remove_pieces, Player, ListOfMoves),
         length(ListOfMoves,Size),
@@ -251,7 +251,7 @@ value(one_player_remove_pieces, Player, Diff):-
         Diff is (SC - SC2),!.
 
 %None of the player cann add pieces anymore
-value(one_player_remove_pieces, _Player, 0).
+value(one_player_remove_pieces, _Player, -100).
 
 % In adding phase the Value is obtain for the number of possible placements
 value(GameState, Player, Val):-
