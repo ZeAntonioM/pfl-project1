@@ -117,10 +117,4 @@ game_over(end_game, Player):-
 
 game_over(end_game,"Black").
 
-congrats(Winner):-
-    nl,
-    print_string_(Winner),
-    write(' Player Won this Game'),nl,nl,
-    isaac_menu.
-
 

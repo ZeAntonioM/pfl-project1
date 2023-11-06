@@ -101,4 +101,5 @@ ask_for_piece_to_remove_message( Position):-
 congrats(Winner):-
     nl,
     print_string_(Winner),
-    write(' Player Won this Game'),nl,nl.
+    write(' Player Won this Game'),nl,nl,
+    isaac_menu.
