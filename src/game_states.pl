@@ -8,9 +8,6 @@
 % if the game is in the start state, it does nothing.
 display(start,_).
 
-% If the player is a robot, it does nothing
-display(_,Player):-player_robot(Player,_),!.
-
 % else it displays the board, the current player and the score counters.
 display(_,Player):-
         draw_board(Player),
@@ -28,9 +25,13 @@ ask_for_move(start,Player,Player).
 % if the game is in the first move state and the player is a easy robot, it takes  a piece of a random valid move to add
 ask_for_move(GameState, Player, Piece-Direction-Position):-
         player_robot(Player, easy),
+        write('Easy'),nl,
         (GameState = both_players_add_pieces ;
-        GameState = one_player_add_pieces),
-        piece_to_add_easy_ia(Player, Piece, Direction, Position).
+        GameState = one_player_add_pieces),!,
+        write('Easy'),nl,
+        piece_to_add_easy_ia(Player, Piece, Direction, Position),
+        write('Easy'),nl
+        .
 
 % if the game is in the second move state and the player is a easy robot, it takes a piece of a random valid move  to removes
 ask_for_move(GameState, Player, Piece-Direction-Position):-
@@ -73,7 +74,7 @@ ask_for_move(GameState,Player,Piece-Direction-Position):-
 %%%%%%%%% Move %%%%%%%%%%
 % move(+GameState, +Piece-Direction-Position, -NewGameState) makes the move
 % if the game is in the start state, it updates the game state.
-move(start, Player,NewGameState):-value(start,Player, NewGameState ).
+move(start, Player,NewGameState):-state_machine(start,Player, NewGameState ).
 
 % if the game is in the first move state, it adds the piece to the board and updates the game state.
 move(GameState, Piece-Direction-Position, NewGameState):-

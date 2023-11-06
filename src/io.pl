@@ -2,7 +2,7 @@
 :-ensure_loaded('logic.pl').
 :-ensure_loaded('draw.pl').
 :-ensure_loaded('logic.pl').
-
+:-ensure_loaded('isaac.pl').
 
 %%%%%%%%%%%%% Ask for Piece to add %%%%%%%%%%%%%%%
 % asks_for_piece_to_add(+Player, -Piece, -Direction, -Position) gets the piece to add from the player

@@ -1,4 +1,5 @@
 :-ensure_loaded('game_states.pl').
+:-ensure_loaded('io.pl').
 
 % Play calls the main menu
 play:- isaac_menu.
@@ -149,9 +150,6 @@ game_over(end_game, Player):-
 game_over(end_game,"Black").
 
 
-congrats(Winner):-
-            write('Player '), write(Winner), write(' Won the Game!'),nl,nl,
-            isaac_menu.
 
 
 
