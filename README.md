@@ -75,7 +75,39 @@ For the pieces, including the `piece_position` predicate, we also have `piece(ID
 
 ### Game State Visualization
 
-- Describe the implementation of the game state display predicate, which should be named `display_game(+GameState)`. Include information about the menu system, user interaction, and input validation. Highlight any appealing and intuitive visualizations.
+The game state is displayed in the console. The board is represented by a 10x10 matrix, where each cell represented a cell from 0 to 99. The pieces are represented in the board by arrows (representing their direction), the owner of the piece and the size of the piece, and the score counters are represented with a text "Black Player SC: "(or Write, depending on the player) and it's position. 
+
+![Image with the board and it's representation](/images/Board.png)
+
+The `display(+GameState, +Player)` predicate is called in the play predicate, and it calls the predicates that draws the board writes the Score Counters and writes whose turn it is.
+
+```prolog
+
+    display(_,Player):-
+        draw_board(Player),
+        sc("W", SCW),
+        sc("B", SCB),
+        draw_SC(Player, SCB,SCW),
+        player_to_move(Player).
+
+```
+
+To validate inputs and moves we created the file `validators-pl`. In there, the inputs are validated depending on what we are checking: 
+
+- `validate_size(+Size)` checks if the size is between 3 and 7
+- `validate_direction(+Direction)` checks if the direction is one of the four possible directions
+- `validate_position(+Position)` checks if the position is between 0 and 99
+- `valid_piece(+Player, +Size, -Piece)` returns a valid piece for the player and size if exists
+- `valid_position(+Size, +Position, +Direction)` checks if the position is valid for the size and direction
+- `validate_menu_choice(+Choice)` checks if the choice is between 1 and 10
+- `validate_piece_to_remove(+Piece)` checks if the piece is on the board
+- `can_remove_piece(+Player, +Piece)` checks if the player can remove the piece
+
+This predicates are usually called in the `move` predicate.
+
+The menu has 10 options: 
+
+![](/images/Menu.png)
 
 ### Move Validation and Execution
 
@@ -83,11 +115,54 @@ For the pieces, including the `piece_position` predicate, we also have `piece(ID
 
 ### List of Valid Moves
 
-- Explain how to obtain a list of possible moves using the `valid_moves` predicate. The predicate should be named `valid_moves(+GameState, +Player, -ListOfMoves)`.
+Each time a move ends, it is necessary to check if there are any valid moves left for the next player. This is done by the `valid_moves` predicate, which is named `valid_moves(+GameState, +Player, -ListOfMoves)`.
+If the Game state is on the second phase, it generates a list of all the pieces that can be removed by the player. If the Game state is on the first phase, it generates a list of all the possible Position-Direction-Size that the player can use to add a piece.
+
+```prolog
+valid_moves(GameState, Player, ListOfMoves):-
+        (GameState = both_players_remove_pieces ;
+        GameState = one_player_remove_pieces),
+        can_remove_pieces(Player,ListOfMoves ).
+      
+valid_moves(GameState, Player, ListOfMoves):-
+        (GameState = both_players_add_pieces ;
+        GameState = one_player_add_pieces),
+        can_place_pieces(Player,ListOfMoves ).  
+```
+
+The `can_remove_pieces` predicate uses a setof to get all the pieces that are placed on the board, are owned by the Player and can be removed, that is, there are no Score Counters above them and they are the biggest piece once removed by the Player. 
+
+The `can_place_pieces` predicate uses a findall to get all the possible Position-Direction-Size that the player can use to add a piece. It uses the `valid_position` predicate to check if the position is valid for the size and direction and `valid_piece` to check if the piece is valid for the player and size. 
+
+```prolog
+can_place_pieces(Player, Pieces):-
+        findall(Size-Direction-Position,can_place_piece(Player,Position,Size,Direction), Pieces ).
+
+can_place_piece(Player,Position,Size,Direction):-
+        can_place_piece(Player, Position, Size,Direction, 3).
+
+can_place_piece(Player,Position,Acc,Direction, Acc):-
+        valid_position(Acc,Position,Direction),
+        valid_piece(Player, Acc,_Piece).
+
+can_place_piece(Player,Position,Size,Direction, Acc):-
+        validate_size(Acc),
+        Acc2 is Acc +1,
+        can_place_piece(Player,Position,Size,Direction, Acc2).
+```
+
 
 ### End of Game
 
-- Describe the verification of the end of the game and the identification of the winner. The `game_over` predicate should be named `game_over(+GameState, -Winner)`.
+When the game state is updated, we check if the game is already over. This is done by the `game_over` predicate, which is named `game_over(+GameState, -Winner)`. It is impossible to draw in this game, so the only possible winners are "W" and "B". The sequence of break ties for winning are:
+
+- The player who reaches 100 points first wins;
+  - We check if there is a player whose score counter as reached 100 points.
+- The player with the highest score wins;
+  - We check both of the players score counters and see which one is higher.
+- The player with the longest line of unplaced pieces wins;
+  - We get the number of pieces remaining at the end of the first phase for both players, align them by players, and see which line is bigger.
+- The player who started the game as black wins.
 
 ### Game State Evaluation
 

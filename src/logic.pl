@@ -80,7 +80,7 @@ piece_to_add_easy_ia(Player, Piece, Direction, Position):-
 %%%%%%%%%%%%%%%%%% 2nd PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%% Can Move Piece %%%%%%%%%%%%%%
+%%%%%%%%%%%%%% Can Remove Piece %%%%%%%%%%%%%%
 % can_remove_pieces(+Player, -Pieces) returns a list of pieces that the player can remove
 % gets all the pieces in board, checks if the player is the owner of the piece and if the piece can be removed
 can_remove_pieces(Player, Pieces):-
