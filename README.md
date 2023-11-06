@@ -1,47 +1,11 @@
-# Isaac Board Game - PFL First Project
+# Isaac Board Game
 
-## Description
+## Authors
 
-This is an implementation in Prolog of the board game "Isaac", which was created at the end of 2010. The game consists of two phases: the placement phase and the scoring phase. The goal is to score at least 100 points during the scoring phase or have the highest score at the end of the game.
+### Group Isaac_3
 
-## ISAAC - Rules
-
-### Board
-
-Isaac uses a 10x10 board, with different numerical values for each player. Each player will see numbers from 1 to 10 on his bottom side of the board, and numbers from 00 to 90 on his left side of the board. The board is initially empty.
-Each player has 15 pieces of 5 different sizes, each one having is own value: 
-- 5 pieces of size 3, value 1;
-- 4 pieces of size 4, value 2;
-- 3 pieces of size 5, value 3;
-- 2 pieces of size 6, value 4;
-- 1 piece of size 7, value 6. 
-
-### Placement Phase
-
-The game always starts with the placement phase. Starting with the Dark player, players take turns placing one of their pieces on empty cells of the board. If a player cannot place a valid piece, he passes, and the other player plays until bot players have no more valid moves.
-The placement phase ends when both players have no more space to place pieces on the board.
-The players who have not placed all their pieces will align their remaining pieces in order to form a line of pieces. The length of the line will determine the player who wins if the players tie in the scoring phase.
-Now, the player who passed first in the placement phase starts the scoring phase.
-
-### Scoring phase
-
-#### Removing Piece
-
-Both players start with 0 points. Players take turns removing one piece from the board, starting with the player who passed first in the placement phase. The removed piece must be at least as large as the largest piece removed previously by the same player. A player cannot remove a piece lying under the score counter(of any colors).
-
-#### Scoring
-
-This game has a specific method to score. Both players start with 0 points, and the score is calculated as follows:
-
-- Count the number of pieces left in the line of the removed piece. This is the base score.
-- Then, we multiply this number by the value of the removed piece. This is the multiplied score.
-- For each counter lying on the line, we multiply the final score by 2. This is the final score.
-
-#### Moving the Score Counter
-
-After scoring, the player may move his score counter a number of cells between 0 and the final score. The score counter cannot be placed on a cell that already contains a score counter.
-
-When a player scores more than 100 points, he wins the game. If both players pass, the player with the highest score wins. If both players have the same score, the player with the longest line wins. If both players have the same score and the same line length, wins the player who started the game.
+- [Francisco Miguel Correia Mariano Pinheiro Cardoso](https://github.com/FranciscoCardoso913), up202108793, 50%
+- [José António Pereira Martins](https://github.com/ZeAntonioM), up202108794, 50%
 
 ## Run the game
 
@@ -49,9 +13,67 @@ When a player scores more than 100 points, he wins the game. If both players pas
 - run `consult('isaac.pl').`
 - run `play.`
 
-## Authors
+## Description
 
-### Team Isaac_3:
+*Isaac* is a strategic board game implemented in Prolog, originally created in 2010. The game features two phases: placement and scoring. The objective is to reach 100 points during the scoring phase or secure the highest score.
 
-- [Francisco Cardoso](https://github.com/FranciscoCardoso913), up202108793
-- [José Martins](https://github.com/ZeAntonioM), up202108794
+### Game Rules
+
+#### Board
+
+Isaac utilizes a 10x10 board with unique numerical values for each player. Players find numbers from 1 to 10 on their board's bottom and 00 to 90 on the left side. The board starts empty. Players have 15 pieces of various sizes, each with its point value.
+
+##### Placement Phase
+
+The game begins with the placement phase. Players take turns placing their pieces on empty cells. Passing occurs when a player can't make a valid move. The phase concludes when there's no more space on the board. Unplaced pieces are aligned, forming a line, which holds significance in the scoring phase. The player who passed first initiates the scoring phase.
+
+#### Scoring Phase
+
+##### Removing Pieces
+
+Both players start with 0 points, removing pieces in turns. The removed piece must be as large as or larger than the previous one by the same player. A piece can't be removed if it's under a score counter.
+
+##### Scoring
+
+Scoring follows a specific method:
+
+- Calculate the remaining pieces in the line where a piece was removed for the base score.
+- Multiply the base score by the value of the removed piece to get the multiplied score.
+- Each score counter on the line doubles the final score.
+
+##### Moving the Score Counter:
+After scoring, players can adjust their score counter, moving it from 0 to the final score, ensuring no overlap with another counter.
+
+The game's objective is to reach over 100 points. To break a tie, the winner is the player with the highest score. To break a tie again, the winner is the player with the longest line of unplaced pieces. To break the final tie, the winner is the black player. This Prolog implementation offers a captivating and strategic gaming experience, making *Isaac* a game of skill and tactics.
+
+### Links:
+
+- [Game Rules](https://www.iggamecenter.com/en/rules/isaac)
+- [Youtube Video](http://www.youtube.com/watch?v=MwotyOed-Sw)
+  
+
+## Game Logic
+
+### Internal Game State Representation
+
+- Describe how the game state is represented, including the board, current player, and any additional information required. Use examples to illustrate the Prolog representation of initial, intermediate, and final game states, and explain the meaning of each atom (i.e., how different pieces are represented).
+
+### Game State Visualization
+
+- Describe the implementation of the game state display predicate, which should be named `display_game(+GameState)`. Include information about the menu system, user interaction, and input validation. Highlight any appealing and intuitive visualizations.
+
+### Move Validation and Execution
+
+- Describe how plays are validated and executed to obtain a new game state. Explain the move predicate, which should be named `move(+GameState, +Move, -NewGameState)`.
+
+### List of Valid Moves
+
+- Explain how to obtain a list of possible moves using the `valid_moves` predicate. The predicate should be named `valid_moves(+GameState, +Player, -ListOfMoves)`.
+
+### End of Game
+
+- Describe the verification of the end of the game and the identification of the winner. The `game_over` predicate should be named `game_over(+GameState, -Winner)`.
+
+### Game State Evaluation
+
+- Explain how the game state is evaluated using the `value` predicate, which should be named `value(+GameState, +Player, -Value)`.

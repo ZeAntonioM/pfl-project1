@@ -52,6 +52,7 @@ move(GameState, Piece-Direction-Position, NewGameState):-
          
 
 
+
 %%%%%%% change player $$$$$$$$$$$$$
 
 change_player(GameState,"W", "B"):-
