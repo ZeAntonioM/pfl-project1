@@ -12,17 +12,17 @@ make_best_move(GameState,Player,BestMove-Points_, N,V):-
     Size >0,!,
     value(GameState, Player, Val),!,
     ((Val>=100)->
-     V is 100;
+     (V is 100);
     valid_moves(both_players_remove_pieces,Player,Moves),!,
     findall(Value-Points-Move,  (
             member(Move,Moves),
             simulate_n_remove(Player,Move,Points,Value,N)                                                           
 ), List ),!,
      sort(List, Rev),
-     reverse_list(Rev,[V-Points_-BestMove|_])       )  ,!
+     reverse_list(Rev,[V-Points_-BestMove|_])       )  ,! 
 .
-
-make_best_move(_,_,_, _,0). % If it fails the value is 0
+% If it fails the value is 0
+make_best_move(_,_,_, _,0). 
 
 %apply_move(+GameState,+Player, +Move,+Positions) 
 %It applies the move from the GameState and the Player

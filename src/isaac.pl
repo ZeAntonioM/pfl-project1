@@ -113,19 +113,20 @@ game_state(_,_):-write('Fail').
 % game_over(+GameState, -Winner) checks if the game is over and returns the winner
 % If the game is on the 2nd phase and the Score Counter of the White Player is 100, then the winner is the White Player
 game_over(GameState,"White"):-
-    (GameState= both_players_remove;
-     GameState = one_player_remove
+    (GameState= both_players_remove_pieces;
+     GameState = one_player_remove_pieces
     ),
     sc("W",SC),
     SC>=100.
 
 % If the game is on the 2nd phase and the Score Counter of the Black Player is 100, then the winner is the Black Player
 game_over(GameState,"Black"):-
-    (GameState= both_players_remove;
-     GameState = one_player_remove
+    (GameState= both_players_remove_pieces;
+     GameState = one_player_remove_pieces
     ),
     sc("B",SC),
     SC>=100.
+
 
 % If the second phase ended, if the White Player has more points than the Black Player, then the winner is the White Player
 game_over(end_game,"White"):-

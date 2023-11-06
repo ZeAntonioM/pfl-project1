@@ -255,9 +255,13 @@ state_machine(both_players_remove_pieces, Player, NewGameState):- !,state_machin
 
 #####  One Player States
 
-In the one-player states, only one player can add or remove pieces, in this state the player should repeatedly make a move until he is unable to. When that happens the state should change to the next phase. 
+In the one-player states, only one player can add or remove pieces, in this state the player should repeatedly make a move until he is either unable to or when he has already won. When that happens the state should change to the next phase. 
 
 ```
+% When only one player is still playing, if he already won it updates the state to the the end of the game
+state_machine(one_player_remove_pieces, Player, end_game):-
+        value(one_player_remove_pieces,Player,100),!.
+
 % Transition between one player add pieces and one player remove pieces
 % If only one player can add or remove pieces, it checks if the player can do a valid move and updates the game state.
 state_machine(GameState, Player, GameState):-
@@ -265,6 +269,7 @@ state_machine(GameState, Player, GameState):-
     valid_moves(GameState, Player, ListOfMoves),
     length(ListOfMoves, Size),
     Size > 0.
+    
 
 % Transition from one player add pieces to the start of the second phase
 state_machine(one_player_add_pieces, Player, second_phase_start):

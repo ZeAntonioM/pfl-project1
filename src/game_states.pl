@@ -42,9 +42,8 @@ ask_for_move(GameState,Player,Piece-Direction-Position):-
         (GameState = both_players_add_pieces ;
         GameState = one_player_add_pieces),
         player_robot(Player,hard),
-        write(Player),nl,
-        piece_to_add_hard_ai(Player,Piece-_-Direction-Position),
-        write(Piece),!.
+        write('Robot Move: '), nl,
+        piece_to_add_hard_ai(Player,Piece-_-Direction-Position),!.
 
 % if the game is in the second move state and the player is a hard robot, it takes a the best piece of  valid move  to removes
 ask_for_move(GameState,Player,Piece-Points):-
@@ -80,7 +79,7 @@ move(second_phase_start, Player,NewGameState):-state_machine(second_phase_start,
 % if the game is in the first move state, it adds the piece to the board and updates the game state.
 move(GameState, Piece-Direction-Position, NewGameState):-
          (GameState = both_players_add_pieces ;
-        GameState = one_player_add_pieces),
+         GameState = one_player_add_pieces),
          piece_size(Piece, Size),
          add_piece(Piece, Size, Direction, Position),
          piece_owner(Piece, Player),
@@ -93,7 +92,7 @@ move(GameState, Piece-Direction-Position, NewGameState):-
         GameState = one_player_remove_pieces),
         remove_piece(Piece),
         piece_owner(Piece, Player),
-         sc(Player,SC),
+        sc(Player,SC),
         bpr(Player,BPR),
         update_biggest_piece(Player,Piece,BPR),
         calculate_points( Piece, Position, Direction, Points),!,
@@ -101,13 +100,14 @@ move(GameState, Piece-Direction-Position, NewGameState):-
         score_points(Player, SC, PointsToScore),!,
         state_machine(GameState, Player, NewGameState).
 
+% if the game is in the second phase and the player is the hard AI then removes the piece and update the score counter
 move(GameState, Piece-PointsToScore, NewGameState):-
         (GameState = both_players_remove_pieces ;
         GameState = one_player_remove_pieces),
         piece_owner(Piece, Player),
         player_robot(Player,_),
         remove_piece(Piece),
-         sc(Player,SC),
+        sc(Player,SC),
         bpr(Player,BPR),
         update_biggest_piece(Player,Piece,BPR),
         score_points(Player, SC, PointsToScore),!,
@@ -162,6 +162,10 @@ state_machine(GameState, Player, GameState):-
         valid_moves(GameState, Next_player, ListOfMoves),
         length(ListOfMoves,Size),
         Size>0,!.
+
+% When only one player is still playing, if he already won it updates the state to the the end of the game
+state_machine(one_player_remove_pieces, Player, end_game):-
+        value(one_player_remove_pieces,Player,100),!.
 
 % if only one player can add or remove pieces, it checks if the player can do a valid move and updates the game state.
 state_machine(GameState, Player, GameState):-
