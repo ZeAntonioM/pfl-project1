@@ -59,23 +59,23 @@ The game's objective is to reach over 100 points. To break a tie, the winner is 
 The Game State is represented as a state machine:
 
 - Starts in `start` state;
-- after choosing option in menu goes for `both_players_add_pieces` state;
+- after choosing an option in the menu goes for `both_players_add_pieces` state;
 - when one player cannot add pieces enters in `one_player_add_pieces` state;
 - Enters second phase with `both_players_remove_pieces` state when no more pieces can be added;
 - When a player passes, state updates to `one_player_remove_pieces`;
 - Ends the game with `end_game` when a player reaches 100 points or both players pass.
 
-The Player is represented with a double quoted string: "W" or "B". It is updated depending on the game state. If only one player can do moves, the player is kept. Else, it is updated from "W" to "B" and vice-versa.
+The Player is represented with a double-quoted string: "W" or "B". It is updated depending on the game state. If only one player can do moves, the player is kept. Else, it is updated from "W" to "B" and vice-versa.
 
 If the player is a robot, we created a predicate that is called when moving: `piece_robot(Player, Difficulty)`.
 
-There isn't such a board in our game. Instead we have predicates named `piece_position(Piece, Direction, Position)`, `sc(Player, Position)` and  `bpr(Player, Size)`, representing the positions of the pieces, the current score counters and the biggest removed piece of each player. Those are updated if needed, like the score counter predicate that is updated at each move in the states `both_players_remove_pieces` and `one_player_remove_pieces`.
+There isn't such a board in our game. Instead, we have predicates named `piece_position(Piece, Direction, Position)`, `sc(Player, Position)` and  `bpr(Player, Size)`, representing the positions of the pieces, the current score counters, and the biggest removed piece of each player. Those are updated if needed, like the score counter predicate that is updated at each move in the states `both_players_remove_pieces` and `one_player_remove_pieces`.
 
-For the pieces, including the `piece_position` predicate, we also have `piece(ID)`, in order to be able to identify each piece, `number_of_pieces(Piece_Size, Number_of_Pieces)` that tells us how many pieces exist from a certain size, `size_value(Size, Value)` that returns the value of a certain size, `piece_owner(Piece. Player)`, that checks if the Piece owner is the Player, and the `piece_size(Piece, Size)`,  that gives the size of a certain Piece. Using this we can get all the information about a piece.
+For the pieces, including the `piece_position` predicate, we also have `piece(ID)`, to be able to identify each piece, `number_of_pieces(Piece_Size, Number_of_Pieces)` that tells us how many pieces exist from a certain size, `size_value(Size, Value)` that returns the value of a certain size, `piece_owner(Piece. Player)`, that checks if the Piece owner is the Player, and the `piece_size(Piece, Size)`,  that gives the size of a certain Piece. Using this we can get all the information about a piece.
 
 ### Game State Visualization
 
-The game state is displayed in the console. The board is represented by a 10x10 matrix, where each cell represented a cell from 0 to 99. The pieces are represented in the board by arrows (representing their direction), the owner of the piece and the size of the piece, and the score counters are represented with a text "Black Player SC: "(or Write, depending on the player) and it's position. 
+The game state is displayed on the console. The board is represented by a 10x10 matrix, where each cell represents a cell from 0 to 99. The pieces are represented on the board by arrows (representing their direction), the owner of the piece and the size of the piece, and the score counters are represented with the text "Black Player SC: "(or Write, depending on the player) and it's position. 
 
 The `display(+GameState, +Player)` predicate is called in the play predicate, and it calls the predicates that draws the board writes the Score Counters and writes whose turn it is.
 
@@ -101,7 +101,7 @@ To validate inputs and moves we created the file `validators-pl`. In there, the 
 - `validate_piece_to_remove(+Piece)` checks if the piece is on the board
 - `can_remove_piece(+Player, +Piece)` checks if the player can remove the piece
 
-This predicates are usually called in the `move` predicate.
+These predicates are usually called in the `move` predicate.
 
 The menu has 10 options: 
 
@@ -120,7 +120,7 @@ The menu has 10 options:
 
 - Describe how plays are validated and executed to obtain a new game state. Explain the move predicate, which should be named `move(+GameState, +Move, -NewGameState)`.
 
-In every turn of the game, it's necessary to make a move. To facilitate this, we created a predicate named `move(+GameState, +Move, -NewGameState)`.
+At every turn of the game, it's necessary to make a move. To facilitate this, we created a predicate named `move(+GameState, +Move, -NewGameState)`.
 
 The move predicate not only executes the player's move but also determines the next game state based on the move.
 
@@ -130,7 +130,7 @@ To assist us in the state process, we created another predicate called `state_ma
 
 #### Move
 
-As mention above the move predicate is used to only executes the player's move but also determines the next game state based on the move.
+As mentioned above the move predicate is used to only execute the player's move but also determines the next game state based on the move.
 
 Each move depends on the Game State.
 
@@ -149,7 +149,7 @@ move(second_phase_start, Player,NewGameState):-state_machine(second_phase_start,
 
 ##### Adding pieces
 
-When we are still in first phase of the game , our move will only add pieces to the board and calculate the next state
+When we are still in the first phase of the game, our move will only add pieces to the board and calculate the next state
 
 ```
 % if the game is in the first move state, it adds the piece to the board and updates the game state.
@@ -164,9 +164,9 @@ move(GameState, Piece-Direction-Position, NewGameState):-
 
 ##### Removing Pieces
 
-When we are still in second phase of the game , our move will remove the piece of the board calculate the obtained points and ask the player how many points would he like to score.
+When we are still in the second phase of the game, our move will remove the piece of the board calculate the obtained points, and ask the player how many points would he like to score.
 
-If a player is a robot the points to score will be obtain by the AI.
+If a player is a robot the points to score will be obtained by the AI.
 
 ```
 % if the game is in the second move state, it removes the piece from the board, updates the score counters 
@@ -201,7 +201,7 @@ move(GameState, Piece-PointsToScore, NewGameState):-
 
 #### State Machine
 
-As mention before the state machine's primary purpose is to facilitate the transition  between different game states. It accomplishes this through a series of  Prolog predicates, each representing a state or transition.
+As mentioned before the state machine's primary purpose is to facilitate the transition between different game states. It accomplishes this through a series of  Prolog predicates, each representing a state or transition.
 
 ##### Start State
 
@@ -216,7 +216,7 @@ state_machine(start, Player, both_players_add_pieces):-
         length(ListOfMoves,Size),
         Size>0.
         
-% updates the start state to both players add pieces.
+% updates the start state to both players and adds pieces.
 state_machine(start, Player, NewGameState):- !,state_machine(both_players_add_pieces, Player,NewGameState).
 
 ```
@@ -235,14 +235,14 @@ state_machine(second_phase_start, _, both_players_remove_pieces):-
 
 ```
 
- This are states that we never want to stay the same, both are intermediate states that only serve to setup and validation.
+ These are states that we never want to stay the same, both are intermediate states that only serve to set up and validate.
 
 ##### Both Players
 
 In this section, we handle game states where both players can either add or remove pieces. The goal is to allow the players to alternate until one of them can no longer make a move, at which point the state transitions to a one-player state.
 
 ```
-% if both players can add or remove pieces, it gets the next player can do a valid move and updates the game state.
+% if both players can add or remove pieces, it gets the next player can do a valid move and update the game state.
 state_machine(GameState, Player, GameState):-
 
         (GameState = both_players_add_pieces;
@@ -253,10 +253,10 @@ state_machine(GameState, Player, GameState):-
         length(ListOfMoves,Size),
         Size>0,!.
         
-% updates the both players add pieces state to one player add pieces.
+% updates both players add pieces state to one player add pieces.
 state_machine(both_players_add_pieces, Player, NewGameState):- !,state_machine(one_player_add_pieces, Player,NewGameState).
 
-% updates the both players remove pieces state to one player remove pieces.
+% updates both players remove pieces state to one player remove pieces.
 state_machine(both_players_remove_pieces, Player, NewGameState):- !,state_machine(one_player_remove_pieces, Player,NewGameState).
 ```
 
@@ -269,7 +269,7 @@ In the one-player states, only one player can add or remove pieces, in this stat
 state_machine(one_player_remove_pieces, Player, end_game):-
         value(one_player_remove_pieces,Player,100),!.
 
-% Transition between one player add pieces and one player remove pieces
+% Transition between one player adding pieces and one player removing pieces
 % If only one player can add or remove pieces, it checks if the player can do a valid move and updates the game state.
 state_machine(GameState, Player, GameState):-
     (GameState = one_player_add_pieces; GameState = one_player_remove_pieces),
@@ -336,7 +336,7 @@ can_place_piece(Player,Position,Size,Direction, Acc):-
 When the game state is updated, we check if the game is already over. This is done by the `game_over` predicate, which is named `game_over(+GameState, -Winner)`. It is impossible to draw in this game, so the only possible winners are "W" and "B". The sequence of break ties for winning are:
 
 - The player who reaches 100 points first wins;
-  - We check if there is a player whose score counter as reached 100 points.
+  - We check if there is a player whose score counter has reached 100 points.
 - The player with the highest score wins;
   - We check both of the players score counters and see which one is higher.
 - The player with the longest line of unplaced pieces wins;
@@ -347,30 +347,30 @@ When the game state is updated, we check if the game is already over. This is do
 
 - Explain how the game state is evaluated using the `value` predicate, which should be named `value(+GameState, +Player, -Value)`.
 
-To determine how good a player is going on a game and determine the impact of  a move in the Game we used the predicate  `value(+GameState, +Player, -Value)` . This predicates receives the Game state and the player and gives us an evaluation of how is the player situation.
+To determine how good a player is doing in a game and determine the impact of a move in the Game we used the predicate  `value(+GameState, +Player, -Value)`. This predicate receives the Game state and the player and gives us an evaluation of how is the player's situation.
 
-The calculus to determine the value differ depending on the phase, being easier to calculate in one than in other.
+The calculus to determine the value differs depending on the phase, being easier to calculate in one than in another.
 
-In the adding phase the evaluation is very straightforward, we calculate the number of possible placements the player can add pieces, and return it as the value, the more possibilities the better the player is.
+In the adding phase, the evaluation is very straightforward, we calculate the number of possible placements the player can add pieces, and return it as the value, the more possibilities the better the player is.
 
-In the removing phases things start getting a little more complicated.
+In the removing phases, things start getting a little more complicated.
 
-While both players can remove pieces then the value is evaluated the following form:
+While both players can remove pieces the value is evaluated in the following form:
 
 - value is 100 - If the player has 100 or more points, as he has already won the game
 - value is (-100) - If the opponent has more than 100 points as we have already lost the game
 - value is 0 - If we are not able to remove any more pieces 
-- Value is Difference of Points between players - otherwise
+- Value is the Difference of Points between players - otherwise
 
 When only one player can remove pieces the evaluation is  done with the following:
 
-- value is 100 - If the player has more points than the opponent,as he already won
-- value is differences of points - when the player is still able to remove pieces but did not won yet
+- value is 100 - If the player has more points than the opponent, as he already won
+- value is differences of points - when the player is still able to remove pieces but has not won yet
 - value is -100 - if he stops being able to remove pieces, as we lost.
 
-In this phases the value can go from -100 to 100.
+In this phases, the value can go from -100 to 100.
 
-This predicate is especially good for the AI as it predicts how good their move are going to be.
+This predicate is especially good for the AI as it predicts how good their move is going to be.
 
 
 
