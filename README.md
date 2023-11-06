@@ -56,7 +56,22 @@ The game's objective is to reach over 100 points. To break a tie, the winner is 
 
 ### Internal Game State Representation
 
-- Describe how the game state is represented, including the board, current player, and any additional information required. Use examples to illustrate the Prolog representation of initial, intermediate, and final game states, and explain the meaning of each atom (i.e., how different pieces are represented).
+The Game State is represented as a state machine:
+
+- Starts in `start` state;
+- after choosing option in menu goes for `both_players_add_pieces` state;
+- when one player cannot add pieces enters in `one_player_add_pieces` state;
+- Enters second phase with `both_players_remove_pieces` state when no more pieces can be added;
+- When a player passes, state updates to `one_player_remove_pieces`;
+- Ends the game with `end_game` when a player reaches 100 points or both players pass.
+
+The Player is represented with a double quoted string: "W" or "B". It is updated depending on the game state. If only one player can do moves, the player is kept. Else, it is updated from "W" to "B" and vice-versa.
+
+If the player is a robot, we created a predicate that is called when moving: `piece_robot(Player, Difficulty)`.
+
+There isn't such a board in our game. Instead we have predicates named `piece_position(Piece, Direction, Position)`, `sc(Player, Position)` and  `bpr(Player, Size)`, representing the positions of the pieces, the current score counters and the biggest removed piece of each player. Those are updated if needed, like the score counter predicate that is updated at each move in the states `both_players_remove_pieces` and `one_player_remove_pieces`.
+
+For the pieces, including the `piece_position` predicate, we also have `piece(ID)`, in order to be able to identify each piece, `number_of_pieces(Piece_Size, Number_of_Pieces)` that tells us how many pieces exist from a certain size, `size_value(Size, Value)` that returns the value of a certain size, `piece_owner(Piece. Player)`, that checks if the Piece owner is the Player, and the `piece_size(Piece, Size)`,  that gives the size of a certain Piece. Using this we can get all the information about a piece.
 
 ### Game State Visualization
 
@@ -77,3 +92,5 @@ The game's objective is to reach over 100 points. To break a tie, the winner is 
 ### Game State Evaluation
 
 - Explain how the game state is evaluated using the `value` predicate, which should be named `value(+GameState, +Player, -Value)`.
+
+
