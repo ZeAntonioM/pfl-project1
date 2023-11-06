@@ -1,11 +1,12 @@
 :-ensure_loaded('draw.pl').
 :-ensure_loaded('io.pl').
 
-%%%%%%%% Display %%%%%%%%%%%%
 
+%%%%%%%% Display %%%%%%%%%%%%
 % display(+GameState, +Player) displays the Board and the current player
 % if the game is in the start state, it does nothing.
 display(start,_).
+
 % else it displays the board, the current player and the score counters.
 display(_,Player):-
         draw_board(Player),
@@ -14,12 +15,11 @@ display(_,Player):-
         draw_SC(Player, SCB,SCW),
         player_to_move(Player).
 
-%%%%%%%% Ask Move %%%%%%%%%%%
 
+%%%%%%%% Ask Move %%%%%%%%%%%
 % ask_for_move(+GameState, +Player, +Piece-Direction-Position) asks the user for a move
 % if the game is in the start state, it does nothing.
 ask_for_move(start,Player,Player).
-
 
 % if the game is in the first move state and the player is a easy robot, it tooks adds a piece of a random valid move
 ask_for_move(GameState, Player, Piece-Direction-Position):-
@@ -35,20 +35,20 @@ ask_for_move(GameState, Player, Piece-Direction-Position):-
         GameState = one_player_remove_pieces),
         piece_to_remove_easy_ia(Player, Piece, Direction, Position).
 
-% if the game is in the first move state, it asks for a piece to add
+% if the game is in the first move state, and the player is a human, it asks for a piece to add
 ask_for_move(GameState,Player,Piece-Direction-Position):-
         (GameState = both_players_add_pieces ;
         GameState = one_player_add_pieces),
         ask_for_piece_to_add(Player, Piece, Direction,Position).
 
-% if the game is in the second move state, it asks for a piece to remove
+% if the game is in the second move state, and the player is a human, it asks for a piece to remove
 ask_for_move(GameState,Player,Piece-Direction-Position):-
         (GameState = both_players_remove_pieces ;
         GameState = one_player_remove_pieces),
         ask_for_piece_to_remove(Player, Piece, Direction,Position).
 
-%%%%%%%%% Move %%%%%%%%%%
 
+%%%%%%%%% Move %%%%%%%%%%
 % move(+GameState, +Piece-Direction-Position, -NewGameState) makes the move
 % if the game is in the start state, it updates the game state.
 move(start, Player,NewGameState):-value(start,Player, NewGameState ).
@@ -95,8 +95,8 @@ change_player(GameState,"B", "W"):-
 % if only one player can add or remove pieces, it mantains the player.
 change_player(_,Player, Player).
 
-%%%%%%%% Value %%%%%%%%%%%
 
+%%%%%%%% Value %%%%%%%%%%%
 % value(+GameState, +Player, -NewGameState) updates the game state
 % if the game is in the start state, it gets the next player and checks if the next player can add pieces. Finally, it returns the game state to the first phase.
 value(start, Player, both_players_add_pieces):-
@@ -140,7 +140,6 @@ value(one_player_remove_pieces, _Player, end_game).
 
 
 %%%%%% Valid Moves %%%%%
-
 %valid_moves(+GameState, +Player, -ListOfMoves) returns a list of valid moves
 %if both players can remove pieces, it returns a list of valid moves to remove pieces.
 valid_moves(GameState, Player, ListOfMoves):-

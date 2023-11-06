@@ -4,7 +4,7 @@
 play:- isaac_menu.
 
 
-% Main menu
+% Isaac_menu is the main menu of the game
 % draws the menu, reads the input and calls the gamemode. If the input is 10, the game ends. 
 isaac_menu :-
             retractall(player_robot(_,_)),
@@ -16,7 +16,8 @@ isaac_menu :-
                 gamemode(Selection)
             ).
 
-
+%%%%%%%%%%%%%% gamemode %%%%%%%%%%%%%%
+% gamemode is the predicate that calls the game mode selected by the user
 % 1 - Player vs Player
 gamemode(1) :- play_game.
 
@@ -72,6 +73,8 @@ gamemode(9) :-
     asserta(player_robot("W", hard)),
     play_game.
 
+
+%%%%%%%%%%%%%% Play Game %%%%%%%%%%%%%%
 % play_game prepares the game and starts it
 play_game :-
             retractall(piece_position(_,_,_)),
@@ -86,6 +89,8 @@ play_game :-
             %populate,
             game_state(start, "W").
     
+
+%%%%%%%%%%%%%% Game State %%%%%%%%%%%%%%
 % game_state(+GameState, +Player) is the main game loop
 % if the game is over, it prints the winner
 game_state(GameState, _):-
@@ -103,6 +108,8 @@ game_state(GameState, Player):-
 % debug questions
 game_state(_,_):-write('Fail').
 
+
+%%%%%%%%% Game Over %%%%%%%%%%%%%
 % game_over(+GameState, -Winner) checks if the game is over and returns the winner
 % If the game is on the 2nd phase and the Score Counter of the White Player is 100, then the winner is the White Player
 game_over(GameState,"White"):-
@@ -129,12 +136,15 @@ game_over(end_game,"Black"):-
     sc("B",SCB),
     sc("W",SCW),
     SCW < SCB.
-    
+
+% If the second phase ended, if the Black Player and the White Player have the same amount of points, then the winner is the 
+% player with the biggest line of pieces remaining
 game_over(end_game, Player):-
     length_remaining_pieces("B", LenghtB),
     length_remaining_pieces("W", LenghtW),
     biggest_lenght(LenghtB, LenghtW, Player).
 
+% else, the winner is the player who started the game.
 game_over(end_game,"Black").
 
 

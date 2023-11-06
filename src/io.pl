@@ -3,6 +3,8 @@
 :-ensure_loaded('draw.pl').
 :-ensure_loaded('logic.pl').
 
+
+%%%%%%%%%%%%% Ask for Piece to add %%%%%%%%%%%%%%%
 % asks_for_piece_to_add(+Player, -Piece, -Direction, -Position) gets the piece to add from the player
 ask_for_piece_to_add(Player, Piece, New_Direction , New_Position):-
 
@@ -25,6 +27,8 @@ ask_for_piece_to_add_message(Size, Direction, Position):-
         ask_for_piece_direction(Direction),!,
         ask_for_piece_position(Position),!.
 
+
+%%%%%%%%%%%%% Ask for piece size %%%%%%%%%%%%%%%
 % ask_for_piece_size(-Size) gets the size of the piece to add
 % Reads the size and checks if it is valid
 ask_for_piece_size(Size):-
@@ -37,6 +41,7 @@ ask_for_piece_size(Size):-
         write('Invalid Size'),nl,
         ask_for_piece_size(Size).
 
+%%%%%%%%%%%%% Ask for piece direction %%%%%%%%%%%%%%%
 % ask_for_piece_direction(-Direction) gets the direction of the piece to add
 % Reads the direction and checks if it is valid
 ask_for_piece_direction(Direction):-
@@ -49,6 +54,7 @@ ask_for_piece_direction(Direction):-
         write('Invalid Direction'),nl,
         ask_for_piece_direction(Direction).
 
+%%%%%%%%%%%%% Ask for piece position %%%%%%%%%%%%%%%
 % ask_for_piece_position(-Position) gets the position of the piece to add
 % Reads the position and checks if it is valid
 ask_for_piece_position(Position):-
@@ -61,6 +67,8 @@ ask_for_piece_position(Position):-
         write('Invalid Position'),nl,
         ask_for_piece_position(Position).
     
+
+%%%%%%%%%%%%% Ask for menu option %%%%%%%%%%%%%%%
 % ask_for_menu_option(-Choice) gets the option chosen by the player
 % Reads the option and checks if it is valid
 ask_for_menu_option(Choice):-
@@ -73,6 +81,8 @@ ask_for_menu_option(Choice):-
         write('Invalid choice! '),
         ask_for_menu_option(Choice).
 
+
+%%%%%%%%% Get Points to Score %%%%%%%%%%%%%%%
 % get_points_to_score(+Points, -PointsToScore) gets the number of points to score
 % Reads the number of points and checks if it is valid
 get_points_to_score(Points, PointsToScore) :-
@@ -87,6 +97,8 @@ get_points_to_score(Points, PointsToScore) :-
     write('Invalid number of points. Try again.'), nl,
     get_points_to_score(Points, PointsToScore).
 
+
+%%%%%%%%%%%%% Ask for piece to remove %%%%%%%%%%%%%%%
 % ask_for_piece_to_remove(+Player, -Piece, -Direction, -Position) gets the piece to remove from the board
 % Reads the piece, direction and position and checks if they are valid 
 ask_for_piece_to_remove(Player, Piece, Direction, New_Position):-
@@ -102,7 +114,6 @@ ask_for_piece_to_remove(Player, Piece, Direction, New_Position):-
                 write('You cannot remove this piece.'), nl, fail
         ).
     
-
 % ask_for_piece_to_remove_message(-Position) is an auxiliar predicate to ask_for_piece_to_remove
 % Reads the position and checks if it is valid
 ask_for_piece_to_remove_message( Position):-
@@ -115,6 +126,9 @@ ask_for_piece_to_remove_message( Position):-
         nl, write('Invalid Piece'),nl,
         ask_for_piece_to_remove_message(Position).
 
+
+%%%%%%%%%%%%% Congrats %%%%%%%%%%%%%%%
+% congrats(+Winner) prints the winner of the game and goes back to the menu
 congrats(Winner):-
     nl,
     print_string_(Winner),

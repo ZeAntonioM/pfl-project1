@@ -10,7 +10,8 @@ init_random_state:-
     now(Seed),
     setrand(Seed).
 
-% Changes the player
+%%%%%%%%%%%% Change Player %%%%%%%%%%%%
+% change_player(+Player, -NewPlayer) changes the current player
 change_player("W", "B").
 
 change_player("B", "W").
@@ -19,6 +20,7 @@ change_player("B", "W").
 %%%%%%%%%%%%%%%%%% 1st PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%% Can Place Piece %%%%%%%%%%%%%%
 % can_place_pieces(+Player, -Pieces) returns a list of pieces that the player can place
 can_place_pieces(Player, Pieces):-
         findall(Size-Direction-Position,can_place_piece(Player,Position,Size,Direction), Pieces ).
@@ -40,6 +42,8 @@ can_place_piece(Player,Position,Size,Direction, Acc):-
         Acc2 is Acc +1,
         can_place_piece(Player,Position,Size,Direction, Acc2).
 
+
+%%%%%%%%%%%%%% Add Piece %%%%%%%%%%%%%%
 % add_piece(+Piece, +Size, +Direction, +Position) adds a piece to the board
 % if size is 0, just returns
 add_piece(_,0,_,_).
@@ -62,19 +66,22 @@ add_piece(Piece,Size,Direction, Position):-
     Size2 is Size -1,
     add_piece(Piece,Size2,Direction, Next_position).
 
+
+%%%%%%%%%%% IA Piece to Add %%%%%%%%%%%%%
+% piece_to_add_easy_ia(+Player, -Piece, -Direction, -Position) returns a piece to add to the board
+% it checks all possible moves and chooses a random one.
 piece_to_add_easy_ia(Player, Piece, Direction, Position):-
         can_place_pieces(Player, Moves),
         random_member((Size-Direction-Position), Moves),
-        %random_member((Size-Direction1-Position1), Moves),
-        %convert_position(Player, Position1, Position),
-        %convert_direction(Player, Direction1, Direction),
         valid_piece(Player, Size, Piece).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%% 2nd PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% can_move_pieces(+Player, -Pieces) returns a list of pieces that the player can move
+%%%%%%%%%%%%%% Can Move Piece %%%%%%%%%%%%%%
+% can_remove_pieces(+Player, -Pieces) returns a list of pieces that the player can remove
 % gets all the pieces in board, checks if the player is the owner of the piece and if the piece can be removed
 can_remove_pieces(Player, Pieces):-
     setof(
@@ -91,15 +98,22 @@ can_remove_pieces(Player, Pieces):-
 % if there is no piece to remove, returns an empty list
 can_remove_pieces(_, []).
 
+
+%%%%%%%%%% IA Piece to Remove %%%%%%%%%%%%%
+% piece_to_remove_easy_ia(+Player, -Piece, -Direction, -Position) returns a piece to remove from the board
+% it checks all possible moves and chooses a random one.
 piece_to_remove_easy_ia(Player, Piece, Direction, Position):-
         can_remove_pieces(Player, Pieces),
         random_member(Piece, Pieces),
         piece_position(Piece, Direction, Position).
 
+%%%%%%%%%%%%%% Remove Piece %%%%%%%%%%%%%%
 % remove_piece(+Piece) removes all the piece's positions from the board
 remove_piece(Piece) :-
     retractall(piece_position(Piece, _, _)).
 
+
+%%%%%%%%%%%%%% Calculate Points %%%%%%%%%%%%%%
 % calculate_points( +Piece, +Position, +Direction, -Points) calculates the points of a move
 % gets the number of pieces in line with the removed piece, checks the number of score counters in the line and calculates the points
 calculate_points( Piece, Position, Direction, Points) :-
@@ -112,6 +126,7 @@ calculate_points( Piece, Position, Direction, Points) :-
     multiply_points(Pieces, Value, SC, Points).
 
 
+%%%%%%%%%%%%%% Get Line Values %%%%%%%%%%%%%%
 % get_line_values(+Direction, +Position, -Values) gets all the positions in the line of the given position
 % if direction is horizontal, gets all the positions between the first and last position of the line
 get_line_values(h, Position, Values) :-
@@ -125,6 +140,8 @@ get_line_values(v, Position, Values) :-
     Column is Position mod 10,
     generate_columns(Column, Values).
 
+
+%%%%%%%%%%%%%% Pieces in Line %%%%%%%%%%%%%%
 % pieces_in_line(+Values, -Pieces) gets the number of pieces in the line
 % gets all the pieces in the line and counts them
 pieces_in_line(Values, Pieces) :-
@@ -134,6 +151,8 @@ pieces_in_line(Values, Pieces) :-
 % if there is no piece in the line, returns 0
 pieces_in_line(_Values, 0).
     
+
+%%%%%%%%%%%%%% SC in Line %%%%%%%%%%%%%%
 % sc_in_line(+Values, +SCB, +SCW, -SC) gets the number of score counters in the line
 % if there are no more values in the list, returns 0
 sc_in_line([], _, _, 0).
@@ -155,10 +174,15 @@ sc_in_line([Value|T], SCB, SCW, SC) :-
 sc_in_line([_Value|T], SCB, SCW, SC) :-
     sc_in_line(T, SCB, SCW, SC).
 
+
+%%%%%%%%%%%%%% Points IA %%%%%%%%%%%%%%
+% points_ia(+Points, -PointsToScore) returns the number of points to score
+% gets all the possible values of points and chooses a random one
 points_ia(Points, PointsToScore):-
     findall(X, between(0,Points, X), Values),
     random_member(PointsToScore, Values).
 
+%%%%%%%%%%%%%% Multiply Points %%%%%%%%%%%%%%
 % multiply_points(+Pieces, +Value, +SC, -Points) calculates the points of a move
 % if there are no score counters in the line, just multiplies the number of pieces by the value of the piece
 multiply_points(Pieces, Value, 0, Points):-
@@ -168,12 +192,15 @@ multiply_points(Pieces, Value, 0, Points):-
 multiply_points(Pieces, Value, SC, Points) :-
     Points is Pieces * Value * 2 * SC.
     
+
+%%%%%%%%%%%%%% Score Points %%%%%%%%%%%%%%
 % score_points(+Player, +SC, +PointsToScore) updates the score of the player
 score_points(Player , SC, PointsToScore) :-
      Points is SC + PointsToScore,
     retractall(sc(Player,_)),
     asserta(sc(Player,Points)).
 
+%%%%%%%%%%%%%% Update Biggest Piece Removed %%%%%%%%%%%%%%
 % update_biggest_piece(+Player, +Piece, +BPR) updates the biggest piece removed by the player
 update_biggest_piece(Player, Piece, BPR):-
         piece_size(Piece,Size),
@@ -181,6 +208,7 @@ update_biggest_piece(Player, Piece, BPR):-
         retractall(bpr(Player,_)),
         asserta(bpr(Player,Size)).
 
+%%%%%%%%%%%%%% Populate %%%%%%%%%%%%%%
 % populate polulates the board with the initial pieces
 populate:-
               add_piece(15,7,u,0),
@@ -211,6 +239,9 @@ populate:-
               add_piece(22,4,d,91),
               add_piece(16,3,d,90).
 
+
+%%%%%%%%%%%%%% Lenght of Remaining Pieces %%%%%%%%%%%%%%
+% length_remaining_pieces(+Player, -Length) returns the lenght of the line formed by the remaining pieces of the player
 length_remaining_pieces(Player, Length):-
         
         findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 3)), N3),
@@ -231,4 +262,10 @@ length_remaining_pieces(Player, Length):-
         R6 is 2 - L6,
         R7 is 1 - L7,
 
-        Length is R3 + R4 + R5 + R6 + R7.
+        R3F is R3*3,
+        R4F is R4*4,
+        R5F is R5*5,
+        R6F is R6*6,
+        R7F is R7*7,
+
+        Length is R3F + R4F + R5F + R6F + R7F.
