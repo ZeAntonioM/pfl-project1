@@ -75,8 +75,7 @@ add_piece(Piece,Size,Direction, Position):-
 % it checks all possible moves and chooses a random one.
 piece_to_add_easy_ia(Player, Piece, Direction, Position):-
         can_place_pieces(Player, Moves),
-        random_member((Size-Direction-Position), Moves),
-        valid_piece(Player, Size, Piece).
+        random_member((Piece-_-Direction-Position), Moves).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

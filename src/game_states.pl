@@ -25,19 +25,16 @@ ask_for_move(start,Player,Player).
 % if the game is in the first move state and the player is a easy robot, it takes  a piece of a random valid move to add
 ask_for_move(GameState, Player, Piece-Direction-Position):-
         player_robot(Player, easy),
-        write('Easy'),nl,
         (GameState = both_players_add_pieces ;
         GameState = one_player_add_pieces),!,
-        write('Easy'),nl,
-        piece_to_add_easy_ia(Player, Piece, Direction, Position),
-        write('Easy'),nl
-        .
+        piece_to_add_easy_ia(Player, Piece, Direction, Position).
 
 % if the game is in the second move state and the player is a easy robot, it takes a piece of a random valid move  to removes
 ask_for_move(GameState, Player, Piece-Direction-Position):-
         player_robot(Player, easy),
         (GameState = both_players_remove_pieces ;
         GameState = one_player_remove_pieces),
+        write('Robot Move: '), nl,
         piece_to_remove_easy_ia(Player, Piece, Direction, Position).
 
 % if the game is in the first move state and the player is a hard robot, it takes the best piece of  valid move  to add
