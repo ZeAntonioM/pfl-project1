@@ -112,10 +112,12 @@ first_piece_of_size(Size, "W",Piece):-
 % next_piece_not_on_board(First_Piece,Last_Piece ,Piece) gives the id of the first piece between First_Piece and Last_Piece that is not on the board
 % Checks that the First_Piece is inferior to the Last_Piece, and that it is on the board. Then it checks the next piece. When it finds a piece that is not on the board it returns it.
 next_piece_not_on_board(First_Piece,Last_Piece ,Piece):-
+        nl,
         First_Piece<Last_Piece,
         piece_position(First_Piece,_,_Pos),!,
         Next_Piece is First_Piece +1,
         next_piece_not_on_board( Next_Piece,Last_Piece,Piece).
+
 
 % If the Piece is not on the board then it returns it.
 next_piece_not_on_board(First_Piece,Last_Piece,First_Piece):-
