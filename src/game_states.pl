@@ -4,7 +4,9 @@
 %%%%%%%% display %%%%%%%%%%%%
 
 display(start,_).
+
 %display(_,Player):-player_robot(Player,_).
+
 display(_,Player):-
         draw_board(Player),
         sc("W", SCW),
@@ -16,6 +18,19 @@ display(_,Player):-
 %%%%%%%% ask move %%%%%%%%%%%
 
 ask_for_move(start,Player,Player).
+
+ask_for_move(GameState, Player, Piece-Direction-Position):-
+        player_robot(Player, easy),
+        (GameState = both_players_add_pieces ;
+        GameState = one_player_add_pieces),
+        piece_to_add_easy_ia(Player, Piece, Direction, Position).
+
+ask_for_move(GameState, Player, Piece-Direction-Position):-
+        player_robot(Player, easy),
+        (GameState = both_players_remove_pieces ;
+        GameState = one_player_remove_pieces),
+        piece_to_remove_easy_ia(Player, Piece, Direction, Position).
+
 ask_for_move(GameState,Player,Piece-Direction-Position):-
         (GameState = both_players_add_pieces ;
         GameState = one_player_add_pieces),
@@ -46,7 +61,7 @@ move(GameState, Piece-Direction-Position, NewGameState):-
         bpr(Player,BPR),
         update_biggest_piece(Player,Piece,BPR),
         calculate_points( Piece, Position, Direction, Points),!,
-        get_points_to_score(Points, PointsToScore),!,
+        (player_robot(Player, _), points_ia(Points, PointsToScore),!; get_points_to_score(Points, PointsToScore),!),
         score_points(Player, SC, PointsToScore),!,
         value(GameState, Player, NewGameState).
          

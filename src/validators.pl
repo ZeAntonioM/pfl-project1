@@ -49,7 +49,7 @@ valid_position(Size,Position,Direction):-
 
 validate_menu_choice(Choice):-
         Choice >= 1,
-        Choice =< 5.
+        Choice =< 10.
 
 validate_piece_to_remove(Piece):-
         piece_position(Piece,_Direction,_Position).

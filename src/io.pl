@@ -50,20 +50,15 @@ ask_for_piece_position(Position):-
 ask_for_piece_position(Position):-
         write('Invalid Position'),nl,
         ask_for_piece_position(Position).
-
-
-isaac_menu(Gamemode):-
-    draw_isaac_menu,
-    ask_for_menu_option(Gamemode).
     
 ask_for_menu_option(Choice):-
     write('Choose an option(1-10): '),
     read(Choice), nl,
     validate_menu_choice(Choice).
     
-ask_for_menu_option(Choise):-
+ask_for_menu_option(Choice):-
         write('Invalid choice! '),
-        ask_for_menu_option(Choise).
+        ask_for_menu_option(Choice).
 
 % Gets the points to score
 get_points_to_score(Points, PointsToScore) :-
@@ -106,4 +101,5 @@ ask_for_piece_to_remove_message( Position):-
 congrats(Winner):-
     nl,
     print_string_(Winner),
-    write(' Player Won this Game'),nl,nl.
+    write(' Player Won this Game'),nl,nl,
+    isaac_menu.

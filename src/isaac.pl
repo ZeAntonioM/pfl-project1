@@ -2,29 +2,63 @@
 
 play:- isaac_menu.
 
-
-isaac_menu :- repeat,
-             draw_isaac_menu,
-             ask_for_menu_option(Selection),
-             read(Selection),
-             (
-                 Selection = 10;
-                 gamemode(Selection),fail
-             ).
-
- %player_robot(Player, easy)
-%player_robot(Player,hard)
+isaac_menu :-
+            retractall(player_robot(_,_)),
+            assertz((player_robot(_,_):-fail)),
+            draw_isaac_menu,
+            ask_for_menu_option(Selection),
+            (
+                Selection = 10;
+                gamemode(Selection)
+            ).
 
 gamemode(1) :- play_game.
 
-gamemode(2) :- play_game.
-gamemode(3) :- play_game.
-gamemode(4) :- play_game.
-gamemode(5) :- play_game.
-gamemode(6) :- play_game.
-gamemode(7) :- play_game.
-gamemode(8) :- play_game.
-gamemode(9) :- play_game.
+gamemode(2) :- 
+    init_random_state,
+    asserta(player_robot("W", easy)),
+    play_game.
+
+gamemode(3) :- 
+    init_random_state,
+    asserta(player_robot("B", easy)),
+    play_game.
+
+gamemode(4) :-
+    init_random_state,
+    asserta(player_robot("W", hard)),
+    play_game.
+
+gamemode(5) :-
+    init_random_state,
+    asserta(player_robot("B", hard)),
+    play_game.
+
+gamemode(6) :- 
+    init_random_state,
+    asserta(player_robot("B", easy)),
+    asserta(player_robot("W", hard)),
+    play_game.
+
+gamemode(7) :-
+    init_random_state,
+    asserta(player_robot("B", hard)),
+    asserta(player_robot("W", easy)),
+    play_game.
+
+gamemode(8) :- 
+    init_random_state,
+    asserta(player_robot("B", easy)),
+    asserta(player_robot("W", easy)),
+    play_game.
+
+gamemode(9) :- 
+    init_random_state,
+    asserta(player_robot("B", hard)),
+    asserta(player_robot("W", hard)),
+    play_game.
+
+gamemode(10).
 
 play_game :-
             retractall(piece_position(_,_,_)),
@@ -82,6 +116,5 @@ game_over(end_game, Player):-
     biggest_lenght(LenghtB, LenghtW, Player).
 
 game_over(end_game,"Black").
-
 
 
