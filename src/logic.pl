@@ -17,19 +17,19 @@ change_player("B", "W").
 
 
 can_place_pieces(Player, Pieces):-
-        findall(Size-Direction-Position,can_place_piece(Player,Position,Size,Direction), Pieces ).
+        findall(Piece-Size-Direction-Position,can_place_piece(Player,Piece,Position,Size,Direction), Pieces ).
 
-can_place_piece(Player,Position,Size,Direction):-
-        can_place_piece(Player, Position, Size,Direction, 3).
+can_place_piece(Player,Piece,Position,Size,Direction):-
+        can_place_piece(Player,Piece, Position, Size,Direction, 3).
 
-can_place_piece(Player,Position,Acc,Direction, Acc):-
+can_place_piece(Player,Piece,Position,Acc,Direction, Acc):-
         valid_position(Acc,Position,Direction),
-        valid_piece(Player, Acc,_Piece).
+        valid_piece(Player, Acc,Piece).
 
-can_place_piece(Player,Position,Size,Direction, Acc):-
+can_place_piece(Player,Piece,Position,Size,Direction, Acc):-
         validate_size(Acc),
         Acc2 is Acc +1,
-        can_place_piece(Player,Position,Size,Direction, Acc2).
+        can_place_piece(Player,Piece,Position,Size,Direction, Acc2).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 populate(Pos1, Pos2):-
         assertz((piece_position(_,_,_):-fail)),
@@ -79,7 +79,8 @@ can_remove_pieces(_, []).
 
 % removes the piece from the board
 remove_piece(Piece) :-
-    retractall(piece_position(Piece, _, _)).
+    retractall(piece_position(Piece, _, _)),!.
+
 
 % Calculates the points of the move
 calculate_points( Piece, Position, Direction, Points) :-
@@ -138,7 +139,7 @@ multiply_points(Pieces, Value, SC, Points) :-
 score_points(Player , SC, PointsToScore) :-
      Points is SC + PointsToScore,
     retractall(sc(Player,_)),
-    asserta(sc(Player,Points)).
+    asserta(sc(Player,Points)),!.
 
 update_biggest_piece(Player, Piece, BPR):-
         piece_size(Piece,Size),
@@ -147,9 +148,21 @@ update_biggest_piece(Player, Piece, BPR):-
         asserta(bpr(Player,Size)).
 
 populate:-
+
+          retractall(piece_position(_,_,_)),
+            retractall(sc(_,_)),
+            retractall(bpr(_,_)),
+            % Sets the board
+            assertz((piece_position(_,_,_):-fail)),
+            assertz((player_robot(_, _):-fail)),   
+            asserta(sc("W",0)),
+            asserta(sc("B",0)),
+            asserta(bpr("W",0)),
+            asserta(bpr("B",0)),
+            retractall((player_robot(_, _))),
               add_piece(15,7,u,0),
               add_piece(14,6,u,1),
-              add_piece(13,6,u,2),
+              add_piece(29,6,u,2),
               add_piece(12,5,u,3),
               add_piece(11,5,u,4),
               add_piece(10,5,u,5),

@@ -1,11 +1,23 @@
 :-ensure_loaded('game_states.pl').
 
-play:- isaac_menu.
+play:-
+            retractall(piece_position(_,_,_)),
+            retractall(sc(_,_)),
+            retractall(bpr(_,_)),
+            % Sets the board
+            assertz((piece_position(_,_,_):-fail)),
+            assertz((player_robot(_, _):-fail)),   
+            asserta(sc("W",0)),
+            asserta(sc("B",0)),
+            asserta(bpr("W",0)),
+            asserta(bpr("B",0)),
+             populate,
+            retractall((player_robot(_, _))),
+            isaac_menu.
 
 
 isaac_menu :- repeat,
              draw_isaac_menu,
-             ask_for_menu_option(Selection),
              read(Selection),
              (
                  Selection = 10;
@@ -15,9 +27,11 @@ isaac_menu :- repeat,
  %player_robot(Player, easy)
 %player_robot(Player,hard)
 
-gamemode(1) :- play_game.
+gamemode(1) :-  play_game.
 
-gamemode(2) :- play_game.
+gamemode(2) :-
+            asserta(player_robot("W",hard)),
+            play_game.
 gamemode(3) :- play_game.
 gamemode(4) :- play_game.
 gamemode(5) :- play_game.
@@ -27,16 +41,7 @@ gamemode(8) :- play_game.
 gamemode(9) :- play_game.
 
 play_game :-
-            retractall(piece_position(_,_,_)),
-            retractall(sc(_,_)),
-            retractall(bpr(_,_)),
-            % Sets the board
-            assertz((piece_position(_,_,_):-fail)),
-            asserta(sc("W",0)),
-            asserta(sc("B",0)),
-            asserta(bpr("W",0)),
-            asserta(bpr("B",0)),
-            %populate,
+           
             game_state(start, "W").
     
 
@@ -45,10 +50,15 @@ game_state(GameState, _):-
        congrats(Winner).
 
 game_state(GameState, Player):-
+            write('Why?'),
     display(GameState, Player),
+    write('Why?'),
     ask_for_move(GameState,Player,Move),
+    write('Why?'),
     move(GameState,Move, NewGameState),
+    write('Why?'),
     change_player(NewGameState,Player, Next_Player),!,
+    write('Why?'),
     game_state(NewGameState, Next_Player).
 
 
@@ -58,13 +68,15 @@ game_over(GameState,"White"):-
     (GameState= both_players_remove;
      GameState = one_player_remove
     ),
-    sc("W",100).
+    sc("W",SC),
+    SC>=100.
 
 game_over(GameState,"Black"):-
     (GameState= both_players_remove;
      GameState = one_player_remove
     ),
-    sc("B",100).
+    sc("B",SC),
+    SC>=100.
 
 game_over(end_game,"White"):-
     sc("B",SCB),
