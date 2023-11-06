@@ -167,36 +167,6 @@ update_biggest_piece(Player, Piece, BPR):-
         retractall(bpr(Player,_)),
         asserta(bpr(Player,Size)).
 
-populate:-
-              add_piece(15,7,u,0),
-              add_piece(14,6,u,1),
-              add_piece(13,6,u,2),
-              add_piece(12,5,u,3),
-              add_piece(11,5,u,4),
-              add_piece(10,5,u,5),
-              add_piece(9,4,u,6),
-              add_piece(8,4,u,7),
-              add_piece(7,4,u,8),
-              add_piece(1,3,u,9),
-              add_piece(2,3,d,68),
-              add_piece(3,3,d,69),
-
-              %add_piece(30,7,d,99),
-              %add_piece(29,6,d,98),
-              %add_piece(28,6,d,97),
-              add_piece(18,3,r,87),
-              add_piece(19,3,r,77),
-              add_piece(17,3,r,97),
-              add_piece(20, 3, d,67),
-              add_piece(27,5,d,96),
-              add_piece(26,5,d,95),
-              add_piece(25,5,d,94),
-              add_piece(24,4,d,93),
-              add_piece(23,4,d,92),
-              add_piece(22,4,d,91),
-              add_piece(16,3,d,90)
-              .
-
 length_remaining_pieces(Player, Length):-
         
         findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 3)), N3),
@@ -211,10 +181,20 @@ length_remaining_pieces(Player, Length):-
         length(N6, L6),
         length(N7, L7),
 
-        R3 is 5 - L3,
-        R4 is 4 - L4,
-        R5 is 3 - L5,
-        R6 is 2 - L6,
-        R7 is 1 - L7,
+        R3 is 15 - L3,
+        R4 is 16 - L4,
+        R5 is 15 - L5,
+        R6 is 12 - L6,
+        R7 is 7 - L7,
 
         Length is R3 + R4 + R5 + R6 + R7.
+
+biggest_lenght(LengthB, LengthW, Player) :-
+    LengthB > LengthW,
+    Player is "B".
+
+biggest_lenght(LengthB, LengthW, Player) :-
+    LengthB < LengthW,
+    Player is "W".
+
+    
