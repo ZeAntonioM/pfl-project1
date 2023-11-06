@@ -60,11 +60,6 @@ ask_for_piece_position(Position):-
 ask_for_piece_position(Position):-
         write('Invalid Position'),nl,
         ask_for_piece_position(Position).
-
-% isaac_menu(+Gamemode) is the menu of the game
-isaac_menu(Gamemode):-
-    draw_isaac_menu,
-    ask_for_menu_option(Gamemode).
     
 % ask_for_menu_option(-Choice) gets the option chosen by the player
 % Reads the option and checks if it is valid
@@ -74,9 +69,9 @@ ask_for_menu_option(Choice):-
     validate_menu_choice(Choice).
     
 % if the option is not valid, it asks again
-ask_for_menu_option(Choise):-
+ask_for_menu_option(Choice):-
         write('Invalid choice! '),
-        ask_for_menu_option(Choise).
+        ask_for_menu_option(Choice).
 
 % get_points_to_score(+Points, -PointsToScore) gets the number of points to score
 % Reads the number of points and checks if it is valid
@@ -119,3 +114,9 @@ ask_for_piece_to_remove_message( Position):-
 ask_for_piece_to_remove_message( Position):-
         nl, write('Invalid Piece'),nl,
         ask_for_piece_to_remove_message(Position).
+
+congrats(Winner):-
+    nl,
+    print_string_(Winner),
+    write(' Player Won this Game'),nl,nl,
+    isaac_menu.

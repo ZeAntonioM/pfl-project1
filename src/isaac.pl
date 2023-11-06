@@ -3,46 +3,74 @@
 % Play calls the main menu
 play:- isaac_menu.
 
+
 % Main menu
 % draws the menu, reads the input and calls the gamemode. If the input is 10, the game ends. 
-isaac_menu :- repeat,
-             draw_isaac_menu,
-             ask_for_menu_option(Selection),
-             read(Selection),
-             (
-                 Selection = 10;
-                 gamemode(Selection),fail
-             ).
+isaac_menu :-
+            retractall(player_robot(_,_)),
+            assertz((player_robot(_,_):-fail)),
+            draw_isaac_menu,
+            ask_for_menu_option(Selection),
+            (
+                Selection = 10;
+                gamemode(Selection)
+            ).
 
-%player_robot(Player, easy)
-%player_robot(Player,hard)
 
 % 1 - Player vs Player
 gamemode(1) :- play_game.
 
 % 2 - Player vs Easy IA
-gamemode(2) :- play_game.
+gamemode(2) :- 
+    init_random_state,
+    asserta(player_robot("W", easy)),
+    play_game.
 
 % 3 - Easy IA vs Player
-gamemode(3) :- play_game.
+gamemode(3) :- 
+    init_random_state,
+    asserta(player_robot("B", easy)),
+    play_game.
 
 % 4 - Player vs Hard IA
-gamemode(4) :- play_game.
+gamemode(4) :-
+    init_random_state,
+    asserta(player_robot("W", hard)),
+    play_game.
 
 % 5 - Hard IA vs Player
-gamemode(5) :- play_game.
+gamemode(5) :-
+    init_random_state,
+    asserta(player_robot("B", hard)),
+    play_game.
 
 % 6 - Easy IA vs Hard IA
-gamemode(6) :- play_game.
+gamemode(6) :- 
+    init_random_state,
+    asserta(player_robot("B", easy)),
+    asserta(player_robot("W", hard)),
+    play_game.
 
 % 7 - Hard IA vs Easy IA
-gamemode(7) :- play_game.
+gamemode(7) :-
+    init_random_state,
+    asserta(player_robot("B", hard)),
+    asserta(player_robot("W", easy)),
+    play_game.
 
 % 8 - Easy IA vs Easy IA
-gamemode(8) :- play_game.
+gamemode(8) :- 
+    init_random_state,
+    asserta(player_robot("B", easy)),
+    asserta(player_robot("W", easy)),
+    play_game.
 
 % 9 - Hard IA vs Hard IA
-gamemode(9) :- play_game.
+gamemode(9) :- 
+    init_random_state,
+    asserta(player_robot("B", hard)),
+    asserta(player_robot("W", hard)),
+    play_game.
 
 % play_game prepares the game and starts it
 play_game :-
@@ -101,11 +129,12 @@ game_over(end_game,"Black"):-
     sc("B",SCB),
     sc("W",SCW),
     SCW < SCB.
+    
+game_over(end_game, Player):-
+    length_remaining_pieces("B", LenghtB),
+    length_remaining_pieces("W", LenghtW),
+    biggest_lenght(LenghtB, LenghtW, Player).
 
-% congrats(+Winner) prints the winner
-congrats(Winner):-
-    nl,
-    print_string_(Winner),
-    write(' Player Won this Game'),nl,nl.
+game_over(end_game,"Black").
 
 

@@ -58,7 +58,7 @@ valid_position(Size,Position,Direction):-
 % validate_menu_choice(+Choice) checks if the choice is between 1 and 10
 validate_menu_choice(Choice):-
         Choice >= 1,
-        Choice =< 5.
+        Choice =< 10.
 
 % validate_piece_to_remove(+Piece) checks if the piece is on the board
 validate_piece_to_remove(Piece):-

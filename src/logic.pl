@@ -1,9 +1,14 @@
 :- use_module(library(clpfd)).
 :- use_module(library(between)).
+:- use_module(library(random)).
+:- use_module(library(system), [now/1]).
 :- ensure_loaded('pieces.pl').
 :- ensure_loaded('io.pl').
 :- ensure_loaded('utils.pl').
 
+init_random_state:-
+    now(Seed),
+    setrand(Seed).
 
 % Changes the player
 change_player("W", "B").
@@ -57,6 +62,13 @@ add_piece(Piece,Size,Direction, Position):-
     Size2 is Size -1,
     add_piece(Piece,Size2,Direction, Next_position).
 
+piece_to_add_easy_ia(Player, Piece, Direction, Position):-
+        can_place_pieces(Player, Moves),
+        random_member((Size-Direction-Position), Moves),
+        %random_member((Size-Direction1-Position1), Moves),
+        %convert_position(Player, Position1, Position),
+        %convert_direction(Player, Direction1, Direction),
+        valid_piece(Player, Size, Piece).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%% 2nd PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
@@ -78,6 +90,11 @@ can_remove_pieces(Player, Pieces):-
 
 % if there is no piece to remove, returns an empty list
 can_remove_pieces(_, []).
+
+piece_to_remove_easy_ia(Player, Piece, Direction, Position):-
+        can_remove_pieces(Player, Pieces),
+        random_member(Piece, Pieces),
+        piece_position(Piece, Direction, Position).
 
 % remove_piece(+Piece) removes all the piece's positions from the board
 remove_piece(Piece) :-
@@ -138,6 +155,10 @@ sc_in_line([Value|T], SCB, SCW, SC) :-
 sc_in_line([_Value|T], SCB, SCW, SC) :-
     sc_in_line(T, SCB, SCW, SC).
 
+points_ia(Points, PointsToScore):-
+    findall(X, between(0,Points, X), Values),
+    random_member(PointsToScore, Values).
+
 % multiply_points(+Pieces, +Value, +SC, -Points) calculates the points of a move
 % if there are no score counters in the line, just multiplies the number of pieces by the value of the piece
 multiply_points(Pieces, Value, 0, Points):-
@@ -189,3 +210,25 @@ populate:-
               add_piece(23,4,d,92),
               add_piece(22,4,d,91),
               add_piece(16,3,d,90).
+
+length_remaining_pieces(Player, Length):-
+        
+        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 3)), N3),
+        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 4)), N4),
+        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 5)), N5),
+        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 6)), N6),
+        findall(Piece, (piece_position(Piece,_,_), piece_owner(Piece, Player), piece_size(Piece, 7)), N7),
+        
+        length(N3, L3),
+        length(N4, L4),
+        length(N5, L5),
+        length(N6, L6),
+        length(N7, L7),
+
+        R3 is 5 - L3,
+        R4 is 4 - L4,
+        R5 is 3 - L5,
+        R6 is 2 - L6,
+        R7 is 1 - L7,
+
+        Length is R3 + R4 + R5 + R6 + R7.

@@ -20,6 +20,21 @@ display(_,Player):-
 % if the game is in the start state, it does nothing.
 ask_for_move(start,Player,Player).
 
+
+% if the game is in the first move state and the player is a easy robot, it tooks adds a piece of a random valid move
+ask_for_move(GameState, Player, Piece-Direction-Position):-
+        player_robot(Player, easy),
+        (GameState = both_players_add_pieces ;
+        GameState = one_player_add_pieces),
+        piece_to_add_easy_ia(Player, Piece, Direction, Position).
+
+% if the game is in the second move state and the player is a easy robot, it tooks removes a piece of a random valid move
+ask_for_move(GameState, Player, Piece-Direction-Position):-
+        player_robot(Player, easy),
+        (GameState = both_players_remove_pieces ;
+        GameState = one_player_remove_pieces),
+        piece_to_remove_easy_ia(Player, Piece, Direction, Position).
+
 % if the game is in the first move state, it asks for a piece to add
 ask_for_move(GameState,Player,Piece-Direction-Position):-
         (GameState = both_players_add_pieces ;
@@ -58,12 +73,12 @@ move(GameState, Piece-Direction-Position, NewGameState):-
         bpr(Player,BPR),
         update_biggest_piece(Player,Piece,BPR),
         calculate_points( Piece, Position, Direction, Points),!,
-        get_points_to_score(Points, PointsToScore),!,
+        (player_robot(Player, _), points_ia(Points, PointsToScore),!; get_points_to_score(Points, PointsToScore),!),
         score_points(Player, SC, PointsToScore),!,
         value(GameState, Player, NewGameState).
 
-%%%%%%% Change Player $$$$$$$$$$$$$
 
+%%%%%%% Change Player $$$$$$$$$$$$$
 % change_player(+GameState, +Player, -NewPlayer) changes the player
 % if both player can add or remove pieces, it changes the player from W to B.
 change_player(GameState,"W", "B"):-
@@ -124,7 +139,7 @@ value(both_players_remove_pieces, Player, NewGameState):- !,value(one_player_rem
 value(one_player_remove_pieces, _Player, end_game).
 
 
-%%%%%% valid Moves %%%%%
+%%%%%% Valid Moves %%%%%
 
 %valid_moves(+GameState, +Player, -ListOfMoves) returns a list of valid moves
 %if both players can remove pieces, it returns a list of valid moves to remove pieces.
