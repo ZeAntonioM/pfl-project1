@@ -50,15 +50,10 @@ game_state(GameState, _):-
        congrats(Winner).
 
 game_state(GameState, Player):-
-            write('Why?'),
     display(GameState, Player),
-    write('Why?'),
     ask_for_move(GameState,Player,Move),
-    write('Why?'),
     move(GameState,Move, NewGameState),
-    write('Why?'),
     change_player(NewGameState,Player, Next_Player),!,
-    write('Why?'),
     game_state(NewGameState, Next_Player).
 
 
