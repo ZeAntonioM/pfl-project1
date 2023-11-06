@@ -83,7 +83,7 @@ piece_to_add_easy_ia(Player, Piece, Direction, Position):-
 %%%%%%%%%%%%%%%%%% 2nd PHASE OF THE GAME %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%% Can Move Piece %%%%%%%%%%%%%%
+%%%%%%%%%%%%%% Can Remove Piece %%%%%%%%%%%%%%
 % can_remove_pieces(+Player, -Pieces) returns a list of pieces that the player can remove
 % gets all the pieces in board, checks if the player is the owner of the piece and if the piece can be removed
 can_remove_pieces(Player, Pieces):-
@@ -179,10 +179,10 @@ sc_in_line([_Value|T], SCB, SCW, SC) :-
     sc_in_line(T, SCB, SCW, SC).
 
 
-%%%%%%%%%%%%%% Points IA %%%%%%%%%%%%%%
-% points_ia(+Points, -PointsToScore) returns the number of points to score
+%%%%%%%%%%%%%% Points Easy IA %%%%%%%%%%%%%%
+% points_easy_ia(+Points, -PointsToScore) returns the number of points to score
 % gets all the possible values of points and chooses a random one
-points_ia(Points, PointsToScore):-
+points_easy_ia(Points, PointsToScore):-
     findall(X, between(0,Points, X), Values),
     random_member(PointsToScore, Values).
 
